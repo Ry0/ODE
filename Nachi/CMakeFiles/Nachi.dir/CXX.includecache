@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/ry0/Desktop/Nachi/arm_struct.h
+/home/ry0/Documents/git/ODE/Nachi/arm_struct.h
 stdio.h
 -
 stdlib.h
@@ -22,13 +22,9 @@ fstream
 vector
 -
 draw_arms.h
-/home/ry0/Desktop/Nachi/draw_arms.h
+/home/ry0/Documents/git/ODE/Nachi/draw_arms.h
 
-/home/ry0/Desktop/Nachi/draw_arms.cpp
-draw_arms.h
-/home/ry0/Desktop/Nachi/draw_arms.h
-
-/home/ry0/Desktop/Nachi/draw_arms.h
+/home/ry0/Documents/git/ODE/Nachi/draw_arms.h
 stdio.h
 -
 stdlib.h
@@ -38,13 +34,13 @@ ode/ode.h
 drawstuff/drawstuff.h
 -
 arm_struct.h
-/home/ry0/Desktop/Nachi/arm_struct.h
+/home/ry0/Documents/git/ODE/Nachi/arm_struct.h
 deque
 -
 pipestream.h
-/home/ry0/Desktop/Nachi/pipestream.h
+/home/ry0/Documents/git/ODE/Nachi/pipestream.h
 
-/home/ry0/Desktop/Nachi/main.cpp
+/home/ry0/Documents/git/ODE/Nachi/main.cpp
 stdio.h
 -
 stdlib.h
@@ -54,11 +50,11 @@ ode/ode.h
 drawstuff/drawstuff.h
 -
 arm_struct.h
-/home/ry0/Desktop/Nachi/arm_struct.h
+/home/ry0/Documents/git/ODE/Nachi/arm_struct.h
 draw_arms.h
-/home/ry0/Desktop/Nachi/draw_arms.h
+/home/ry0/Documents/git/ODE/Nachi/draw_arms.h
 
-/home/ry0/Desktop/Nachi/pipestream.h
+/home/ry0/Documents/git/ODE/Nachi/pipestream.h
 cstdio
 -
 iostream

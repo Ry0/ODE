@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ry0/Desktop/Nachi
+CMAKE_SOURCE_DIR = /home/ry0/Documents/git/ODE/Nachi
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ry0/Desktop/Nachi
+CMAKE_BINARY_DIR = /home/ry0/Documents/git/ODE/Nachi
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Nachi.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/Nachi.dir/flags.make
 
 CMakeFiles/Nachi.dir/main.cpp.o: CMakeFiles/Nachi.dir/flags.make
 CMakeFiles/Nachi.dir/main.cpp.o: main.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ry0/Desktop/Nachi/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ry0/Documents/git/ODE/Nachi/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/Nachi.dir/main.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/Nachi.dir/main.cpp.o -c /home/ry0/Desktop/Nachi/main.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/Nachi.dir/main.cpp.o -c /home/ry0/Documents/git/ODE/Nachi/main.cpp
 
 CMakeFiles/Nachi.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Nachi.dir/main.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ry0/Desktop/Nachi/main.cpp > CMakeFiles/Nachi.dir/main.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ry0/Documents/git/ODE/Nachi/main.cpp > CMakeFiles/Nachi.dir/main.cpp.i
 
 CMakeFiles/Nachi.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Nachi.dir/main.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ry0/Desktop/Nachi/main.cpp -o CMakeFiles/Nachi.dir/main.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ry0/Documents/git/ODE/Nachi/main.cpp -o CMakeFiles/Nachi.dir/main.cpp.s
 
 CMakeFiles/Nachi.dir/main.cpp.o.requires:
 .PHONY : CMakeFiles/Nachi.dir/main.cpp.o.requires
@@ -74,17 +74,17 @@ CMakeFiles/Nachi.dir/main.cpp.o.provides.build: CMakeFiles/Nachi.dir/main.cpp.o
 
 CMakeFiles/Nachi.dir/draw_arms.cpp.o: CMakeFiles/Nachi.dir/flags.make
 CMakeFiles/Nachi.dir/draw_arms.cpp.o: draw_arms.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ry0/Desktop/Nachi/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ry0/Documents/git/ODE/Nachi/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/Nachi.dir/draw_arms.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/Nachi.dir/draw_arms.cpp.o -c /home/ry0/Desktop/Nachi/draw_arms.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/Nachi.dir/draw_arms.cpp.o -c /home/ry0/Documents/git/ODE/Nachi/draw_arms.cpp
 
 CMakeFiles/Nachi.dir/draw_arms.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Nachi.dir/draw_arms.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ry0/Desktop/Nachi/draw_arms.cpp > CMakeFiles/Nachi.dir/draw_arms.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ry0/Documents/git/ODE/Nachi/draw_arms.cpp > CMakeFiles/Nachi.dir/draw_arms.cpp.i
 
 CMakeFiles/Nachi.dir/draw_arms.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Nachi.dir/draw_arms.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ry0/Desktop/Nachi/draw_arms.cpp -o CMakeFiles/Nachi.dir/draw_arms.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ry0/Documents/git/ODE/Nachi/draw_arms.cpp -o CMakeFiles/Nachi.dir/draw_arms.cpp.s
 
 CMakeFiles/Nachi.dir/draw_arms.cpp.o.requires:
 .PHONY : CMakeFiles/Nachi.dir/draw_arms.cpp.o.requires
@@ -123,6 +123,6 @@ CMakeFiles/Nachi.dir/clean:
 .PHONY : CMakeFiles/Nachi.dir/clean
 
 CMakeFiles/Nachi.dir/depend:
-	cd /home/ry0/Desktop/Nachi && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ry0/Desktop/Nachi /home/ry0/Desktop/Nachi /home/ry0/Desktop/Nachi /home/ry0/Desktop/Nachi /home/ry0/Desktop/Nachi/CMakeFiles/Nachi.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ry0/Documents/git/ODE/Nachi && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ry0/Documents/git/ODE/Nachi /home/ry0/Documents/git/ODE/Nachi /home/ry0/Documents/git/ODE/Nachi /home/ry0/Documents/git/ODE/Nachi /home/ry0/Documents/git/ODE/Nachi/CMakeFiles/Nachi.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Nachi.dir/depend
 

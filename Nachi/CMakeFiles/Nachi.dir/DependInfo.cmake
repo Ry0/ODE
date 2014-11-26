@@ -4,8 +4,8 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/ry0/Desktop/Nachi/draw_arms.cpp" "/home/ry0/Desktop/Nachi/CMakeFiles/Nachi.dir/draw_arms.cpp.o"
-  "/home/ry0/Desktop/Nachi/main.cpp" "/home/ry0/Desktop/Nachi/CMakeFiles/Nachi.dir/main.cpp.o"
+  "/home/ry0/Documents/git/ODE/Nachi/draw_arms.cpp" "/home/ry0/Documents/git/ODE/Nachi/CMakeFiles/Nachi.dir/draw_arms.cpp.o"
+  "/home/ry0/Documents/git/ODE/Nachi/main.cpp" "/home/ry0/Documents/git/ODE/Nachi/CMakeFiles/Nachi.dir/main.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

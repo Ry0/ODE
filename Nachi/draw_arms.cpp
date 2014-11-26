@@ -1,7 +1,7 @@
 #include "draw_arms.h"
 
-// using namespace std;
-// using namespace ode_utils;
+  // using namespace std;
+  // using namespace ode_utils;
 
 extern dWorldID      world;                   // 動力学計算用のワールド
 extern dSpaceID      space;                   // 衝突検出用のスペース

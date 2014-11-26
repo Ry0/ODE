@@ -172,6 +172,30 @@ void Pcontrol()
   }
 }
 
+void Vcontrol()
+{
+  //dReal k =  20.0;
+  dReal fMax = 200.0;                   // 比例ゲイン，最大トルク
+
+  for (int j = 1; j < 7; j++) {
+    dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
+    dReal z = THETA[j] - tmp;                      // 残差
+    if (z >=   M_PI) z -= 2.0 * M_PI;
+    if (z <= - M_PI) z += 2.0 * M_PI;
+    if(z > 0.01){
+      dJointSetHingeParam(joint[j],dParamVel, 1);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
+    }else if(z < -0.01){
+      dJointSetHingeParam(joint[j],dParamVel, -1);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定)else{
+    }else{
+      dJointSetHingeParam(joint[j],dParamVel, 0);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
+    }
+  }
+}
+
+
 
 /*** 視点と視線の設定 ***/
 void start()
@@ -273,22 +297,22 @@ void simLoop(int pause)
   // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
   // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
   //障害物かわすようのコメントアウト
-  // if((i/data_num)%2 == 0){
-  //   P[0] = vobstacle[i%data_num].x;
-  //   P[1] = vobstacle[i%data_num].y;
-  //   P[2] = vobstacle[i%data_num].z;
-  // }else{
-  //   P[0] = vobstacle[data_num-1-i%data_num].x;
-  //   P[1] = vobstacle[data_num-1-i%data_num].y;
-  //   P[2] = vobstacle[data_num-1-i%data_num].z;
-  // }
+  if((i/data_num)%2 == 0){
+    P[0] = vobstacle[i%data_num].x;
+    P[1] = vobstacle[i%data_num].y;
+    P[2] = vobstacle[i%data_num].z;
+  }else{
+    P[0] = vobstacle[data_num-1-i%data_num].x;
+    P[1] = vobstacle[data_num-1-i%data_num].y;
+    P[2] = vobstacle[data_num-1-i%data_num].z;
+  }
 
-  //cout << "step: " << i << endl;
-  // if(i>=data_num){
-  //   P[0] = vobstacle[data_num-1].x;
-  //   P[1] = vobstacle[data_num-1].y;
-  //   P[2] = vobstacle[data_num-1].z;
-  // }
+  std::cout << "step: " << i << std::endl;
+  if(i>=data_num){
+    P[0] = vobstacle[data_num-1].x;
+    P[1] = vobstacle[data_num-1].y;
+    P[2] = vobstacle[data_num-1].z;
+  }
 
   #ifdef PLOT
   if(!pause){
@@ -332,7 +356,7 @@ void simLoop(int pause)
   drawBase();
   drawP();                                     // 目標位置の描画
   // drawSensor();                                // 先端位置の描画
-  //drawBox();
+  drawBox();
 
   i++;
 }
@@ -388,7 +412,7 @@ int main(int argc, char **argv)
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
 
-  //makeBox();
+  makeBox();
 
 #ifdef PLOT
   gnuplot = new ps::pipestream( "gnuplot -geometry 480x480" );
