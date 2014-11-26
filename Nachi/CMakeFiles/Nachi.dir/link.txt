@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/Nachi.dir/main.cpp.o CMakeFiles/Nachi.dir/draw_arms.cpp.o  -o Nachi  -L/usr/lib/X11 -rdynamic -lode -ldrawstuff -lGL -lGLU -lXmu -lX11 -lstdc++ -lpthread -lm -Wl,-rpath,/usr/lib/X11 
