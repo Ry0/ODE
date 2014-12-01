@@ -1,40 +1,39 @@
-#include "draw_arms.h"
-
-  // using namespace std;
-  // using namespace ode_utils;
+#include "area_struct.h"
+#include "arm_struct.h"
 
 extern dWorldID      world;                   // 動力学計算用のワールド
 extern dSpaceID      space;                   // 衝突検出用のスペース
 extern dGeomID       ground;                  // 地面のジオメトリID番号
 extern dJointGroupID contactgroup;            // 接触点グループ
-extern dJointID      joint[7];              // ジョイントのID番号
+extern dJointID      joint[7];                // ジョイントのID番号
 extern dJointID      bodyjoint1[8], bodyjoint2[13], bodyjoint3, bodyjoint4[4], bodyjoint5, bodyjoint6[4];
 extern dBodyID       sensor;                  // センサ用のボディID
 extern dJointID      sensor_joint;            // センサ固定用の関節
 extern dsFunctions   fn;                      // ドロースタッフの描画関数
 
 extern MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[2], bodyparts4[5], bodyparts5[2], bodyparts6[5];
-extern dReal  THETA[7];             // 関節の目標角度[rad]
+extern dReal  THETA[7];                       // 関節の目標角度[rad]
 
-extern int  ANSWER;              // 逆運動学の解
+extern int  ANSWER;                           // 逆運動学の解
 extern int  i,j;
 
-extern dReal P[3];             // 先端の位置
+extern dReal P[3];                            // 先端の位置
 
 // 有顔ベクトル(a,b)
-extern dReal a[3];//?わっからーん
-extern dReal b[3];//?わっからーん
+extern dReal a[3];                            //?わっからーん
+extern dReal b[3];                            //?わっからーん
 extern dReal T[2];
-extern dReal l[7];   // リンクの長さ[m]
+extern dReal l[7];                            // リンクの長さ[m]
 
+extern vector< POINT > vobstacle;
 
 void makeSensor()
 {
   dMass mass;
-  double sx = 0.0, sy = 0.0, sz = 1.268;  // センサの初期座標[m]
-  double r = 0.04, weight = 0.01; // センサのサイズ[m]と重量[kg]
+  double sx = 0.0, sy = 0.0, sz = 1.268;     // センサの初期座標[m]
+  double r = 0.04, weight = 0.01;            // センサのサイズ[m]と重量[kg]
 
-  sensor = dBodyCreate(world);          // センサの生成
+  sensor = dBodyCreate(world);               // センサの生成
   dBodySetPosition(sensor,sx,sy,sz);
   dMassSetZero(&mass);
   dMassSetSphereTotal(&mass, weight, r);

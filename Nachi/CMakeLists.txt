@@ -7,13 +7,16 @@ ADD_DEFINITIONS(
   -DdDOUBLE
   -DdTRIMESH_ENABLED
 )
+
 project( Nachi )
 
 include_directories("/usr/include/X11/")
 include_directories("/usr/local/include/ode/")
 include_directories("/usr/local/include/drawstuff/")
 
+find_package( OpenCV REQUIRED )
+
 link_directories("/usr/lib/X11/")
 
-add_executable( Nachi main.cpp draw_arms.cpp)
-target_link_libraries( Nachi ode drawstuff GL GLU Xmu X11 stdc++ pthread m)
+add_executable( Nachi main.cpp arm_struct.cpp obstacle_struct.cpp control.cpp)
+target_link_libraries( Nachi ${OpenCV_LIBS} ode drawstuff GL GLU Xmu X11 stdc++ pthread m )
