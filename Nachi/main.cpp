@@ -20,13 +20,13 @@ dSpaceID      space;                   // 衝突検出用のスペース
 dGeomID       ground;                  // 地面のジオメトリID番号
 dJointGroupID contactgroup;            // 接触点グループ
 dJointID      joint[7];                // ジョイントのID番号
-dJointID      bodyjoint1[8], bodyjoint2[13], bodyjoint3, bodyjoint4[4], bodyjoint5, bodyjoint6[4];
+dJointID      bodyjoint1[8], bodyjoint2[13], bodyjoint3[4], bodyjoint4[4], bodyjoint5, bodyjoint6[4];
 dJointID      boxjoint;
 dBodyID       sensor;                  // センサ用のボディID
 dJointID      sensor_joint;            // センサ固定用の関節
 dsFunctions   fn;                      // ドロースタッフの描画関数
 
-MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[2], bodyparts4[5], bodyparts5[2], bodyparts6[5];
+MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[5], bodyparts4[5], bodyparts5[2], bodyparts6[5];
 MyObject boxparts;
 dReal  THETA[7] = {0.0};               // 関節の目標角度[rad]
 
@@ -34,13 +34,13 @@ int  ANSWER = 1;                       // 逆運動学の解
 int  i,j = 0;
 int data_num = 0;
 
-dReal P[3] = {0.35, 0.35, 0.20};       // 先端の位置
+dReal P[3] = {0.35, 0.25, 0.20};       // 先端の位置
 
 // 有顔ベクトル(a,b)
 dReal a[3];                            //?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};          //?わっからーん
 dReal T[2] = {M_PI, 0.0};
-dReal l[7] = {0.20, 0.145, 0.33, 0.34, 0.34, 0.073, 0.0};   // リンクの長さ[m]
+dReal l[7] = {0.20, 0.145, 0.33, 0.34, 0.34, 0.073, 0.18+0.04};   // リンクの長さ[m]
 
 vector< POINT > vobstacle;
 
@@ -56,19 +56,19 @@ POINT p = {0.35, 0.35, 0.20};          //?わっからーん
 
 void simLoop(int pause)
 {
-  // P[0] = 0.4;
-  // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
-  // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
+  P[0] = 0.4;
+  P[1] = 0.1+0.16*pow(sin(0.01*i),3);
+  P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
   //障害物かわすようのコメントアウト
-  if((i/data_num)%2 == 0){
-    P[0] = vobstacle[i%data_num].x;
-    P[1] = vobstacle[i%data_num].y;
-    P[2] = vobstacle[i%data_num].z;
-  }else{
-    P[0] = vobstacle[data_num-1-i%data_num].x;
-    P[1] = vobstacle[data_num-1-i%data_num].y;
-    P[2] = vobstacle[data_num-1-i%data_num].z;
-  }
+  // if((i/data_num)%2 == 0){
+  //   P[0] = vobstacle[i%data_num].x;
+  //   P[1] = vobstacle[i%data_num].y;
+  //   P[2] = vobstacle[i%data_num].z;
+  // }else{
+  //   P[0] = vobstacle[data_num-1-i%data_num].x;
+  //   P[1] = vobstacle[data_num-1-i%data_num].y;
+  //   P[2] = vobstacle[data_num-1-i%data_num].z;
+  // }
   printPosition(vobstacle, i);
 
 
@@ -115,13 +115,13 @@ void simLoop(int pause)
   drawArmCenter();                                   // ロボットの描画
   drawArmSide();                                   // ロボットの描画
   drawGripper_start();
-  // drawGripper();
-  // drawGripper_edge();
+  drawGripper();
+  drawGripper_edge();
   drawBase();
   //drawP();                                     // 目標位置の描画
 
-  // drawSensor();                                // 先端位置の描画
-  drawBox();
+  drawSensor();                                // 先端位置の描画
+  // drawBox();
 
   i++;
 }
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
   makeBase();
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
-  makeBox();
+  // makeBox();
 
 #ifdef PLOT
   gnuplot = new ps::pipestream( "gnuplot -geometry 480x480" );

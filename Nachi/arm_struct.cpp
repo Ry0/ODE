@@ -6,12 +6,12 @@ extern dSpaceID      space;                   // 衝突検出用のスペース
 extern dGeomID       ground;                  // 地面のジオメトリID番号
 extern dJointGroupID contactgroup;            // 接触点グループ
 extern dJointID      joint[7];                // ジョイントのID番号
-extern dJointID      bodyjoint1[8], bodyjoint2[13], bodyjoint3, bodyjoint4[4], bodyjoint5, bodyjoint6[4];
+extern dJointID      bodyjoint1[8], bodyjoint2[13], bodyjoint3[4], bodyjoint4[4], bodyjoint5, bodyjoint6[4];
 extern dBodyID       sensor;                  // センサ用のボディID
 extern dJointID      sensor_joint;            // センサ固定用の関節
 extern dsFunctions   fn;                      // ドロースタッフの描画関数
 
-extern MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[2], bodyparts4[5], bodyparts5[2], bodyparts6[5];
+extern MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[5], bodyparts4[5], bodyparts5[2], bodyparts6[5];
 extern dReal  THETA[7];                       // 関節の目標角度[rad]
 
 extern int  ANSWER;                           // 逆運動学の解
@@ -120,20 +120,23 @@ void  makeArm()
   dReal  parts2_start_z[14] = {0.59, 0.59, 0.45, 0.59, 0.59, 0.675, 0.675, 0.675, 0.675, 0.505, 0.505, 0.505, 0.505, 0.345};// 重心 z
   dReal  parts2_hinge_y[4] = {-0.08, -0.05, 0.05, 0.08};
 
-  dReal  parts3_mass[2]  = {0.18, 0.02};// 質量
-  dReal  parts3_x_length[2] = {0.1, 0.02};
-  dReal  parts3_y_length[2] = {0.1, 0.1};
-  dReal  parts3_z_length[2] = {0.2, 0.18};
-  dReal  parts3_start_x[2] = {0, 0.06};// 重心 x
+  dReal  parts3_mass[5]  = {0.20, 0.02, 0.01, 0.005, 0.0025};// 質量
+  dReal  parts3_x_length[3] = {0.1, 0.04, 0.06};
+  dReal  parts3_y_length = 0.1;
+  dReal  parts3_z_length[3] = {0.21, 0.12, 0.04};
+  dReal  parts3_r = 0.04;
+  dReal  parts3_start_x[5] = {0, 0.07, 0.02, 0.05, -0.01};// 重心 x
   dReal  parts3_start_y = 0;// 重心 y
-  dReal  parts3_start_z[2] = {0.725, 0.715};// 重心 z
+  dReal  parts3_start_z[5] = {0.72, 0.635, 0.595, 0.695, 0.615};// 重心 z
+  dReal  parts3_hinge_x[4] = {0.07, 0.02, 0.05, -0.01};
+  dReal  parts3_hinge_z[4] = {0.635, 0.595, 0.695, 0.615};
 
   dReal  parts4_mass[5]  = {0.05, 0.15, 0.4, 0.15, 0.05};// 質量
-  dReal  parts4_x_length[3] = {0.12, 0.12, 0.12};
-  dReal  parts4_y_length[3] = {0.02, 0.08, 0.02};
+  dReal  parts4_x_length[3] = {0.10, 0.10, 0.10};
+  dReal  parts4_y_length[3] = {0.014, 0.08, 0.014};
   dReal  parts4_z_length[3] = {0.19, 0.14, 0.19};
   dReal  parts4_start_x = 0;// 重心 x
-  dReal  parts4_start_y[5] = {-0.05, 0, 0.05, -0.05, 0.05};// 重心 y
+  dReal  parts4_start_y[5] = {-0.047, 0, 0.047, -0.047, 0.047};// 重心 y
   dReal  parts4_start_z[5] = {0.92, 0.895, 0.92, 1.015, 1.015};// 重心 z
   dReal  parts4_hinge_y[2] = {-0.04, 0.04};
 
@@ -152,6 +155,9 @@ void  makeArm()
   dReal  parts6_z_length[5] = {0.01, 0.04, 0.03, 0.06, 0.04};  // 長さ
   dReal  parts6_r[5]      = {0.04, 0.038, 0.02, 0.04, 0.05};  // 半径
   dReal  parts6_hinge_z[4] = {1.098, 1.138, 1.168, 1.228};
+
+  dReal min_angle[6] = {-170.0*M_PI/180.0, -80.0*M_PI/180.0, -90.0*M_PI/180.0, -190.0*M_PI/180.0, -120.0*M_PI/180.0, -360.0*M_PI/180.0};
+  dReal max_angle[6] = {170.0*M_PI/180.0, 135.0*M_PI/180.0, 155.0*M_PI/180.0, 190.0*M_PI/180.0, 120.0*M_PI/180.0, 360.0*M_PI/180.0};
 
   dRFromAxisAndAngle(R, 1, 0, 0, M_PI/2.0);
 
@@ -280,25 +286,38 @@ void  makeArm()
 
 
   //パーツ3の作成
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 3; i++) {
     bodyparts3[i].body  = dBodyCreate(world);
     dMassSetZero(&mass);
-    dMassSetBoxTotal(&mass,parts3_mass[i], parts3_x_length[i], parts3_y_length[i], parts3_z_length[i]);
+    dMassSetBoxTotal(&mass,parts3_mass[i], parts3_x_length[i], parts3_y_length, parts3_z_length[i]);
     dBodySetMass(bodyparts3[i].body, &mass);
 
-    bodyparts3[i].geom = dCreateBox(space, parts3_x_length[i], parts3_y_length[i], parts3_z_length[i]);
+    bodyparts3[i].geom = dCreateBox(space, parts3_x_length[i], parts3_y_length, parts3_z_length[i]);
     dGeomSetBody(bodyparts3[i].geom, bodyparts3[i].body);
     dBodySetPosition(bodyparts3[i].body, parts3_start_x[i], parts3_start_y, parts3_start_z[i]);
   }
 
-  //パーツ3の合体
-  bodyjoint3 = dJointCreateHinge(world,0);
-  dJointAttach(bodyjoint3, bodyparts3[0].body, bodyparts3[1].body);
-  dJointSetHingeAxis(bodyjoint3,1, 0, 0);
-  dJointSetHingeAnchor(bodyjoint3, 0, 0.05, 0.715);//ヒンジの中心点(x,y,z)
-  dJointSetHingeParam(bodyjoint3,dParamLoStop, 0);
-  dJointSetHingeParam(bodyjoint3,dParamHiStop, 0);
+  for (int i = 3; i < 5; i++) {
+    bodyparts3[i].body = dBodyCreate(world);
+    dBodySetPosition(bodyparts3[i].body, parts3_start_x[i], parts3_start_y, parts3_start_z[i]);
+    dMassSetZero(&mass);
+    dMassSetCylinderTotal(&mass, parts3_mass[i], 2, parts3_r, parts3_y_length);
+    dBodySetMass(bodyparts3[i].body, &mass);
 
+    bodyparts3[i].geom = dCreateCylinder(space, parts3_r, parts3_y_length);
+    dGeomSetBody(bodyparts3[i].geom, bodyparts3[i].body);
+    dBodySetRotation(bodyparts3[i].body, R);
+  }
+
+  //パーツ3の合体
+  for (int i = 0; i < 4; i++) {
+    bodyjoint3[i] = dJointCreateHinge(world,0);
+    dJointAttach(bodyjoint3[i], bodyparts3[i].body, bodyparts3[i+1].body);
+    dJointSetHingeAxis(bodyjoint3[i],1, 0, 0);
+    dJointSetHingeAnchor(bodyjoint3[i], parts3_hinge_x[i], 0.0, parts3_hinge_z[i]);//ヒンジの中心点(x,y,z)
+    dJointSetHingeParam(bodyjoint3[i],dParamLoStop, 0);
+    dJointSetHingeParam(bodyjoint3[i],dParamHiStop, 0);
+  }
 
   //パーツ4の作成
   for (int i = 0; i < 3; i++) {
@@ -315,10 +334,10 @@ void  makeArm()
     bodyparts4[i].body = dBodyCreate(world);
     dBodySetPosition(bodyparts4[i].body, parts4_start_x, parts4_start_y[i], parts4_start_z[i]);
     dMassSetZero(&mass);
-    dMassSetCylinderTotal(&mass, parts4_mass[i], 2, 0.06, 0.02);
+    dMassSetCylinderTotal(&mass, parts4_mass[i], 2, 0.05, 0.008);
     dBodySetMass(bodyparts4[i].body, &mass);
 
-    bodyparts4[i].geom = dCreateCylinder(space, 0.06, 0.02);
+    bodyparts4[i].geom = dCreateCylinder(space, 0.05, 0.008);
     dGeomSetBody(bodyparts4[i].geom, bodyparts4[i].body);
     dBodySetRotation(bodyparts4[i].body, R);
   }
@@ -425,6 +444,13 @@ void  makeArm()
   dJointAttach(joint[6], bodyparts6[0].body, bodyparts5[0].body);
   dJointSetHingeAnchor(joint[6], 0, 0, 1.088);
   dJointSetHingeAxis(joint[6], 0, 0, 1);
+
+  for (int i = 1; i < 7; i++) {
+    dJointSetHingeParam(joint[i],dParamLoStop, min_angle[i-1]);
+    dJointSetHingeParam(joint[i],dParamHiStop, max_angle[i-1]);
+    // cout << "min_angle["<< i-1 << "]=" << min_angle[i-1] << endl;
+    // cout << "max_angle["<< i-1 << "]=" << max_angle[i-1] << endl;
+  }
 }
 
 
@@ -450,11 +476,12 @@ void drawArmSide()
 
   dReal parts2_length_04[] = {0.10, 0.02, 0.17};
 
-  dReal parts3_length_0[] = {0.1, 0.1, 0.2};
-  dReal parts3_length_1[] = {0.02, 0.1, 0.18};
+  dReal parts3_length_0[] = {0.1, 0.1, 0.21};
+  dReal parts3_length_1[] = {0.04, 0.1, 0.12};
+  dReal parts3_length_2[] = {0.06, 0.1, 0.04};
 
-  dReal parts4_length_02[] = {0.12, 0.02, 0.19};
-  dReal parts4_length_1[] = {0.12, 0.08, 0.14};
+  dReal parts4_length_02[] = {0.1, 0.014, 0.19};
+  dReal parts4_length_1[] = {0.1, 0.08, 0.14};
 
   dReal parts5_length[] = {0.08, 0.08, 0.073};
 
@@ -479,12 +506,15 @@ void drawArmSide()
 
   dsDrawBox(dBodyGetPosition(bodyparts3[0].body), dBodyGetRotation(bodyparts3[0].body), parts3_length_0);
   dsDrawBox(dBodyGetPosition(bodyparts3[1].body), dBodyGetRotation(bodyparts3[1].body), parts3_length_1);
+  dsDrawBox(dBodyGetPosition(bodyparts3[2].body), dBodyGetRotation(bodyparts3[2].body), parts3_length_2);
+  dsDrawCylinder(dBodyGetPosition(bodyparts3[3].body),dBodyGetRotation(bodyparts3[3].body), 0.1, 0.04);
+  dsDrawCylinder(dBodyGetPosition(bodyparts3[4].body),dBodyGetRotation(bodyparts3[4].body), 0.1, 0.04);
 
   dsDrawBox(dBodyGetPosition(bodyparts4[0].body), dBodyGetRotation(bodyparts4[0].body), parts4_length_02);
   dsDrawBox(dBodyGetPosition(bodyparts4[1].body), dBodyGetRotation(bodyparts4[1].body), parts4_length_1);
   dsDrawBox(dBodyGetPosition(bodyparts4[2].body), dBodyGetRotation(bodyparts4[2].body), parts4_length_02);
-  dsDrawCylinder(dBodyGetPosition(bodyparts4[3].body),dBodyGetRotation(bodyparts4[3].body), 0.02, 0.06);
-  dsDrawCylinder(dBodyGetPosition(bodyparts4[4].body),dBodyGetRotation(bodyparts4[4].body), 0.02, 0.06);
+  dsDrawCylinder(dBodyGetPosition(bodyparts4[3].body),dBodyGetRotation(bodyparts4[3].body), 0.014, 0.05);
+  dsDrawCylinder(dBodyGetPosition(bodyparts4[4].body),dBodyGetRotation(bodyparts4[4].body), 0.014, 0.05);
 
   dsDrawBox(dBodyGetPosition(bodyparts5[0].body), dBodyGetRotation(bodyparts5[0].body), parts5_length);
   dsDrawCylinder(dBodyGetPosition(bodyparts5[1].body),dBodyGetRotation(bodyparts5[1].body), 0.08, 0.04);

@@ -101,6 +101,7 @@ void inverseKinematics()
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
   double a2[3];
   double b2[3];
+  double NowJoint[7];
 
   double P5x = Px - (l[5] + l[6])*a[0];
   double P5y = Py - (l[5] + l[6])*a[1];
@@ -167,9 +168,15 @@ void inverseKinematics()
 
   THETA[5] = atan2(cos(THETA[4]) * a2[0] + sin(THETA[4]) * a2[1], a2[2]);
   THETA[6] = atan2(sin(THETA[4]) * sin(THETA[5])*b2[0] - cos(THETA[4])*sin(THETA[5])*b2[1], b2[2]);
-  printf("\nJoint   Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",THETA[1]*180/M_PI,THETA[2]*180/M_PI,THETA[3]*180/M_PI);
-  printf("                  4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", THETA[4] * 180 / M_PI,
-         THETA[5] * 180 / M_PI, THETA[6] * 180 / M_PI);
+
+  for (int i = 1; i < 7; ++i){
+    NowJoint[i] = dJointGetHingeAngle(joint[i]);
+  }
+
+  printf("\nInput  Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",THETA[1]*180/M_PI,THETA[2]*180/M_PI,THETA[3]*180/M_PI);
+  printf("                 4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", THETA[4] * 180 / M_PI, THETA[5] * 180 / M_PI, THETA[6] * 180 / M_PI);
+  printf("\nOutput Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",NowJoint[1] * 180 / M_PI, NowJoint[2]*180/M_PI, NowJoint[3]*180/M_PI);
+  printf("                 4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", NowJoint[4] * 180 / M_PI, NowJoint[5] * 180 / M_PI, NowJoint[6] * 180 / M_PI);
 }
 
 void yugan_a()
@@ -195,10 +202,10 @@ void printPosition(std::vector<POINT> &path, int loop)
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
 
-  if(loop - 200 < 0){
+  if(loop - 150 < 0){
     i = 0;
   }else{
-    i = loop - 200;
+    i = loop - 150;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
