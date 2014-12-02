@@ -1,9 +1,14 @@
 #include "area_struct.h"
 #include "control.h"
 
+#include <cv.h>
+#include <highgui.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 extern dReal  THETA[7];                // 関節の目標角度[rad]
 extern dJointID joint[7];              // ジョイントのID番号
-extern int  ANSWER;                    // 逆運動学の解
+extern int ANSWER;                     // 逆運動学の解
 extern int data_num;
 
 extern dReal P[3];                     // 先端の位置
@@ -174,20 +179,37 @@ void yugan_a()
   a[2] = cos(T[0]);
 }
 
+
+
 #define B(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3]
 #define G(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+1]
 #define R(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+2]
 void printPosition(std::vector<POINT> &path, int loop)
 {
-  dReal tmpP[3];
   dMatrix3 tmpR;
   double R = 0.0;
   double G = 0.0;
   double B = 0.0;
+  int i;
   int color = 0;
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
-  for (int i = 0; i < loop; ++i) {
+
+  if(loop - 200 < 0){
+    i = 0;
+  }else{
+    i = loop - 200;
+  }
+  for (; i < loop; ++i) {
+    if((i/data_num)%2 == 0){
+      P[0] = vobstacle[i%data_num].x;
+      P[1] = vobstacle[i%data_num].y;
+      P[2] = vobstacle[i%data_num].z;
+    }else{
+      P[0] = vobstacle[data_num-1-i%data_num].x;
+      P[1] = vobstacle[data_num-1-i%data_num].y;
+      P[2] = vobstacle[data_num-1-i%data_num].z;
+    }
     color = i%180;
     B(img, 0, 0) = color;
     G(img, 0, 0) = 255;
@@ -198,11 +220,8 @@ void printPosition(std::vector<POINT> &path, int loop)
     R = R(img, 0, 0) / 255.0;
     G = G(img, 0, 0) / 255.0;
     B = B(img, 0, 0) / 255.0;
-    tmpP[0] = path[i].x;
-    tmpP[1] = path[i].y;
-    tmpP[2] = path[i].z;
     dsSetColor(R, G, B);
     dRSetIdentity(tmpR);
-    dsDrawSphere(tmpP, tmpR, 0.02);
+    dsDrawSphere(P, tmpR, 0.008);
   }
 }

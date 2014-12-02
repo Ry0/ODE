@@ -53,7 +53,7 @@ void printSensorPosition()
   double pos2[3];
 
   for (int i = 0; i < 3; ++i){//擬似的にセンサーの値をジャミンググリッパの先端の座標に持ってくる
-    pos2[i] = pos[i]+a[i]*0.04;
+    pos2[i] = pos[i] + a[i]*0.04;
   }
 
   printf("Current Position: x=%7.3f y=%7.3f z=%7.3f \n", pos2[0], pos2[1], pos2[2]);

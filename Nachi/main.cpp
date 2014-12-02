@@ -44,7 +44,6 @@ dReal l[7] = {0.20, 0.145, 0.33, 0.34, 0.34, 0.073, 0.0};   // リンクの長�
 
 vector< POINT > vobstacle;
 
-
 /*** 視点と視線の設定 ***/
 void start()
 {
@@ -70,13 +69,15 @@ void simLoop(int pause)
     P[1] = vobstacle[data_num-1-i%data_num].y;
     P[2] = vobstacle[data_num-1-i%data_num].z;
   }
+  printPosition(vobstacle, i);
+
 
   std::cout << "step: " << i << std::endl;
-  if(i>=data_num){
-    P[0] = vobstacle[data_num-1].x;
-    P[1] = vobstacle[data_num-1].y;
-    P[2] = vobstacle[data_num-1].z;
-  }
+  // if(i>=data_num){
+  //   P[0] = vobstacle[data_num-1].x;
+  //   P[1] = vobstacle[data_num-1].y;
+  //   P[2] = vobstacle[data_num-1].z;
+  // }
 
   #ifdef PLOT
   if(!pause){
@@ -118,7 +119,7 @@ void simLoop(int pause)
   // drawGripper_edge();
   drawBase();
   //drawP();                                     // 目標位置の描画
-  printPosition(vobstacle, i);
+
   // drawSensor();                                // 先端位置の描画
   drawBox();
 

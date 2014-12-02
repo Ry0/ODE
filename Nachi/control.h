@@ -12,5 +12,4 @@ void inverseKinematics();
 void yugan_a();
 
 void printPosition(std::vector<POINT> &path, int loop);
-void RGBtoHSV(int src[], int hsv[]);
 #endif
