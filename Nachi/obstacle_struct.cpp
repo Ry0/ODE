@@ -37,7 +37,6 @@ void makeBox()
   dJointAttach(boxjoint, boxparts.body, 0);
   dJointSetFixed(boxjoint);
 
-
 }
 
 
@@ -48,8 +47,8 @@ void drawBox()
   double R = 0.0/255.0;
   double G = 191.0/255.0;
   double B = 255.0/255.0;
-  dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.5);
+  //dsSetColor(R,G,B);
+  dsSetColorAlpha(R, G, B, 0.25);
 
   dsDrawBox(dBodyGetPosition(boxparts.body), dBodyGetRotation(boxparts.body), box_length);
 
@@ -60,7 +59,7 @@ void drawBox()
   tmpP1[1] = 0.35;
   tmpP1[2] = 0.40;
 
-  tmpP2[0] = 0.20;
+  tmpP2[0] = 0.2;
   tmpP2[1] = -0.35;
   tmpP2[2] = 0.10;
 

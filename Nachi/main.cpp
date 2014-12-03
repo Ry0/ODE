@@ -56,9 +56,9 @@ POINT p = {0.35, 0.35, 0.20};          //?わっからーん
 
 void simLoop(int pause)
 {
-  P[0] = 0.4;
-  P[1] = 0.1+0.16*pow(sin(0.01*i),3);
-  P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
+  // P[0] = 0.4;
+  // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
+  // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
   //障害物かわすようのコメントアウト
   // if((i/data_num)%2 == 0){
   //   P[0] = vobstacle[i%data_num].x;
@@ -121,7 +121,7 @@ void simLoop(int pause)
   //drawP();                                     // 目標位置の描画
 
   drawSensor();                                // 先端位置の描画
-  // drawBox();
+  drawBox();
 
   i++;
 }
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
   makeBase();
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
-  // makeBox();
+  makeBox();
 
 #ifdef PLOT
   gnuplot = new ps::pipestream( "gnuplot -geometry 480x480" );
