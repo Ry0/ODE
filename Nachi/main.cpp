@@ -29,6 +29,8 @@ dsFunctions   fn;                      // ドロースタッフの描画関数
 MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[5], bodyparts4[5], bodyparts5[2], bodyparts6[5];
 MyObject boxparts;
 dReal  THETA[7] = {0.0};               // 関節の目標角度[rad]
+dReal min_angle[6] = {-170.0*M_PI/180.0, -80.0*M_PI/180.0, -90.0*M_PI/180.0, -190.0*M_PI/180.0, -120.0*M_PI/180.0, -360.0*M_PI/180.0}; // 各関節の最小角度[rad]
+dReal max_angle[6] = {170.0*M_PI/180.0, 135.0*M_PI/180.0, 155.0*M_PI/180.0, 190.0*M_PI/180.0, 120.0*M_PI/180.0, 360.0*M_PI/180.0};     // 各関節の最小角度[rad]
 
 int  ANSWER = 1;                       // 逆運動学の解
 int  i,j = 0;
@@ -69,7 +71,8 @@ void simLoop(int pause)
   //   P[1] = vobstacle[data_num-1-i%data_num].y;
   //   P[2] = vobstacle[data_num-1-i%data_num].z;
   // }
-  printPosition(vobstacle, i);
+
+  //printPosition(vobstacle, i);
 
 
   std::cout << "step: " << i << std::endl;
@@ -118,7 +121,7 @@ void simLoop(int pause)
   drawGripper();
   drawGripper_edge();
   drawBase();
-  //drawP();                                     // 目標位置の描画
+  drawP();                                     // 目標位置の描画
 
   drawSensor();                                // 先端位置の描画
   drawBox();

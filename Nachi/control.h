@@ -9,6 +9,7 @@ void Pcontrol();
 void Vcontrol();
 
 void inverseKinematics();
+void PrintAngle(dReal NowJoint[]);
 void yugan_a();
 
 void printPosition(std::vector<POINT> &path, int loop);

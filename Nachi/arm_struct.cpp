@@ -13,6 +13,9 @@ extern dsFunctions   fn;                      // ドロースタッフの描画�
 
 extern MyObject base, bodyparts1[9], bodyparts2[14], bodyparts3[5], bodyparts4[5], bodyparts5[2], bodyparts6[5];
 extern dReal  THETA[7];                       // 関節の目標角度[rad]
+extern dReal min_angle[6]; // 各関節の最小角度[rad]
+extern dReal max_angle[6]; // 各関節の最小角度[rad]
+
 
 extern int  ANSWER;                           // 逆運動学の解
 extern int  i,j;
@@ -155,9 +158,6 @@ void  makeArm()
   dReal  parts6_z_length[5] = {0.01, 0.04, 0.03, 0.06, 0.04};  // 長さ
   dReal  parts6_r[5]      = {0.04, 0.038, 0.02, 0.04, 0.05};  // 半径
   dReal  parts6_hinge_z[4] = {1.098, 1.138, 1.168, 1.228};
-
-  dReal min_angle[6] = {-170.0*M_PI/180.0, -80.0*M_PI/180.0, -90.0*M_PI/180.0, -190.0*M_PI/180.0, -120.0*M_PI/180.0, -360.0*M_PI/180.0};
-  dReal max_angle[6] = {170.0*M_PI/180.0, 135.0*M_PI/180.0, 155.0*M_PI/180.0, 190.0*M_PI/180.0, 120.0*M_PI/180.0, 360.0*M_PI/180.0};
 
   dRFromAxisAndAngle(R, 1, 0, 0, M_PI/2.0);
 
