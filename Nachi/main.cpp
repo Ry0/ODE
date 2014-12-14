@@ -72,7 +72,7 @@ void simLoop(int pause)
   //   P[2] = vobstacle[data_num-1-i%data_num].z;
   // }
 
-  //printPosition(vobstacle, i);
+  printPosition(vobstacle, i);
 
 
   std::cout << "step: " << i << std::endl;
@@ -121,7 +121,7 @@ void simLoop(int pause)
   drawGripper();
   drawGripper_edge();
   drawBase();
-  drawP();                                     // 目標位置の描画
+  // drawP();                                     // 目標位置の描画
 
   drawSensor();                                // 先端位置の描画
   drawBox();
