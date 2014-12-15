@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="step5" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="DebugDoubleLib">
+				<Option output="step5.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="-DWIN32" />
+					<Add option="-DdDOUBLE" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\ode\src" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\ode\src" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="ode_doubled" />
+					<Add library="drawstuffd" />
+					<Add library="user32" />
+					<Add library="winmm" />
+					<Add library="gdi32" />
+					<Add library="opengl32" />
+					<Add library="glu32" />
+					<Add directory="..\..\lib\DebugDoubleLib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\drawstuff\src\resources.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="dm5.cpp" />
+		<Unit filename="dm5.h" />
+		<Unit filename="step5.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
