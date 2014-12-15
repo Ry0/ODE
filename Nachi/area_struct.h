@@ -29,6 +29,9 @@ using namespace std;
 #define dsDrawCylinder dsDrawCylinderD
 #endif
 
+// #define Skeleton
+// #define PLOT
+
 typedef struct {
   dBodyID body;                        // ボディのID番号
   dGeomID geom;                        // ジオメトリのID番号

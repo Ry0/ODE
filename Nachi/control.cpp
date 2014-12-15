@@ -1,10 +1,14 @@
 #include "area_struct.h"
 #include "control.h"
+#include "obstacle_struct.h"
 
 #include <cv.h>
 #include <highgui.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+/*---------------------------------------------------------------------- ↓グローバル変数定義ここから↓ -------------------------------------------------------------------------------*/
+extern dWorldID world;                   // 動力学計算用のワールド
 
 extern dReal  THETA[7];                // 関節の目標角度[rad]
 extern dReal min_angle[6]; // 各関節の最小角度[rad]
@@ -21,7 +25,51 @@ extern dReal b[3];
 extern dReal T[2];
 extern dReal l[7];                     // リンクの長さ[m]
 
-extern vector< POINT > vobstacle;
+extern vector< POINT > pathdata;
+extern dReal StartP[3],GoalP[3];
+/*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
+
+
+bool YesorNo(){
+  string Confirm;
+
+  cout << "上のモードで始めます。よければ「y」、だめなら「n」を入力してEnter" << endl;
+  while(1){
+    cin >> Confirm;
+    if(Confirm == "n"){
+      return false;
+      break;
+    }else if(Confirm == "y"){
+      return true;
+      break;
+    }else{
+      cout << "「y」か「n」を入力してください" << endl;
+    }
+  }
+}
+
+
+int input_arg(int argc, char* argv[])
+{
+  string PlotDataPass = "./data/";
+  string filename;
+
+  if (argc <= 1) {
+    cout << "\n自由操作モード" << endl;
+    return 0;
+  } else if (argc == 2) { // 引数を一つ指定されたら、そのファイルにしたがって軌道生成+障害物を立てる
+    string ObstacleFile = string(argv[1]);
+    filename = PlotDataPass + ObstacleFile;
+    cout << "ファイルパスは " << filename << endl;
+    Input_Data(filename);
+    cout << "\n障害物回避モード" << endl;
+    return 1;
+  } else {
+    cout << "引数は1つだけにしてくださいな。" << endl;
+    return 2;
+  }
+}
+
 
 int CountNumbersOfTextLines(std::string fileName){
   int i = 0;
@@ -46,11 +94,19 @@ void Input_Data(std::string fileName)
 {
   std::ifstream input(fileName.c_str());
   data_num = CountNumbersOfTextLines(fileName);
-  vobstacle.resize(data_num);
-  printf("ばかばか\n");
+  pathdata.resize(data_num);
+
   for (int i = 0; i < data_num; ++i){
-    input >> vobstacle[i].x >> vobstacle[i].y >> vobstacle[i].z;
+    input >> pathdata[i].x >> pathdata[i].y >> pathdata[i].z;
   }
+
+  StartP[0] = pathdata[0].x;
+  StartP[1] = pathdata[0].y;
+  StartP[2] = pathdata[0].z;
+  GoalP[0] = pathdata[data_num-1].x;
+  GoalP[1] = pathdata[data_num-1].y;
+  GoalP[2] = pathdata[data_num-1].z;
+  cout << "ファイル読み込み成功" << endl;
 
   input.close();
 }
@@ -96,89 +152,7 @@ void Vcontrol()
 }
 
 
-// void inverseKinematics()
-// {
-//   double Px, Py, Pz;
-//   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
-//   double a2[3];
-//   double b2[3];
-//   double NowJoint[7];
 
-//   double P5x = Px - (l[5] + l[6])*a[0];
-//   double P5y = Py - (l[5] + l[6])*a[1];
-//   double P5z = Pz - (l[5] + l[6])*a[2];
-
-//   printf("Target  Position: x=%7.3f y=%7.3f z=%7.3f \n", Px, Py, Pz);
-
-//   double tmpL  = sqrt(P5x * P5x + P5y * P5y);
-//   double P1P   = sqrt(P5x * P5x + P5y * P5y
-//                + (P5z - (l[0] + l[1])) * (P5z - (l[0] + l[1])));
-//   double Ca    = (l[2] * l[2] + P1P * P1P -l[3] * l[3])/(2 * l[2] * P1P);  // cosα
-
-//   double phi   = atan2(P5z - (l[0] + l[1]), tmpL);                      //φ
-//   double alpha = atan2(sqrt(1 - Ca * Ca), Ca);                         //α
-
-//   double Cb    = (l[2]*l[2] + l[3]*l[3] - P1P*P1P)/(2 * l[2] * l[3]);  //cosβ
-//   double beta  = atan2(sqrt(1- Cb * Cb), Cb);                          //β
-
-
-//   switch (ANSWER) { // ANSWERはキーボードからの入力で変更
-//     case 1:
-//     case 2:
-//       THETA[1] = atan2(P5y, P5x);
-//       THETA[2] = M_PI/2 - phi - alpha;
-//       THETA[3] = M_PI - beta; break;
-//     case 3:
-//     case 4:
-//       THETA[1] = atan2(P5y, P5x);
-//       THETA[2] = M_PI/2 - phi + alpha;
-//       THETA[3] = M_PI + beta; break;
-//     case 5:
-//     case 6:
-//       THETA[1] = atan2(P5y, P5x) + M_PI;
-//       THETA[2] = -(M_PI/2 - phi - alpha);
-//       THETA[3] = M_PI + beta; break;
-//     case 7:
-//     case 8:
-//       THETA[1] = atan2(P5y, P5x) + M_PI;
-//       THETA[2] = -(M_PI/2 - phi + alpha);
-//       THETA[3] = M_PI - beta; break;
-//   }
-
-//   a2[0] = cos(THETA[2]+THETA[3])*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) - a[2]*sin(THETA[2]+THETA[3]);
-//   a2[1] = -a[0]*sin(THETA[1]) + a[1]*cos(THETA[1]);
-//   a2[2] = sin(THETA[2]+THETA[3])*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) + a[2]*cos(THETA[2]+THETA[3]);
-//   b2[0] = cos(THETA[2]+THETA[3])*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) - b[2]*sin(THETA[2]+THETA[3]);
-//   b2[1] = -b[0]*sin(THETA[1]) + b[1]*cos(THETA[1]);
-//   b2[2] = sin(THETA[2]+THETA[3])*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) + b[2]*cos(THETA[2]+THETA[3]);
-
-//   switch (ANSWER) { // ANSWERはキーボードからの入力で変更
-//     case 1:
-//     case 3:
-//     case 5:
-//     case 7:
-//       THETA[4] = atan2(a2[1], a2[0]);
-//       break;
-//     case 2:
-//     case 4:
-//     case 6:
-//     case 8:
-//       THETA[4] = atan2(a2[1], a2[0]) + M_PI;
-//       break;
-//   }
-
-//   THETA[5] = atan2(cos(THETA[4]) * a2[0] + sin(THETA[4]) * a2[1], a2[2]);
-//   THETA[6] = atan2(sin(THETA[4]) * sin(THETA[5])*b2[0] - cos(THETA[4])*sin(THETA[5])*b2[1], b2[2]);
-
-//   for (int i = 1; i < 7; ++i){
-//     NowJoint[i] = dJointGetHingeAngle(joint[i]);
-//   }
-
-//   printf("\nInput  Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",THETA[1]*180/M_PI,THETA[2]*180/M_PI,THETA[3]*180/M_PI);
-//   printf("                 4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", THETA[4] * 180 / M_PI, THETA[5] * 180 / M_PI, THETA[6] * 180 / M_PI);
-//   printf("\nOutput Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",NowJoint[1] * 180 / M_PI, NowJoint[2]*180/M_PI, NowJoint[3]*180/M_PI);
-//   printf("                 4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", NowJoint[4] * 180 / M_PI, NowJoint[5] * 180 / M_PI, NowJoint[6] * 180 / M_PI);
-// }
 void inverseKinematics()
 {
   double Px, Py, Pz;
@@ -316,13 +290,13 @@ void printPosition(std::vector<POINT> &path, int loop)
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
-      P[0] = vobstacle[i%data_num].x;
-      P[1] = vobstacle[i%data_num].y;
-      P[2] = vobstacle[i%data_num].z;
+      P[0] = pathdata[i%data_num].x;
+      P[1] = pathdata[i%data_num].y;
+      P[2] = pathdata[i%data_num].z;
     }else{
-      P[0] = vobstacle[data_num-1-i%data_num].x;
-      P[1] = vobstacle[data_num-1-i%data_num].y;
-      P[2] = vobstacle[data_num-1-i%data_num].z;
+      P[0] = pathdata[data_num-1-i%data_num].x;
+      P[1] = pathdata[data_num-1-i%data_num].y;
+      P[2] = pathdata[data_num-1-i%data_num].z;
     }
     color = i%180;
     B(img, 0, 0) = color;

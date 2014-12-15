@@ -1,6 +1,7 @@
 #include "area_struct.h"
 #include "arm_struct.h"
 
+/*---------------------------------------------------------------------- ↓グローバル変数定義ここから↓ -------------------------------------------------------------------------------*/
 extern dWorldID      world;                   // 動力学計算用のワールド
 extern dSpaceID      space;                   // 衝突検出用のスペース
 extern dGeomID       ground;                  // 地面のジオメトリID番号
@@ -16,7 +17,6 @@ extern dReal  THETA[7];                       // 関節の目標角度[rad]
 extern dReal min_angle[6]; // 各関節の最小角度[rad]
 extern dReal max_angle[6]; // 各関節の最小角度[rad]
 
-
 extern int  ANSWER;                           // 逆運動学の解
 extern int  i,j;
 
@@ -29,6 +29,7 @@ extern dReal T[2];
 extern dReal l[7];                            // リンクの長さ[m]
 
 extern vector< POINT > vobstacle;
+/*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
 
 void makeSensor()
 {
@@ -462,8 +463,12 @@ void drawBase()
   double G = 0/255;
   double B = 0/255;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
+
   dGeomCapsuleGetParams(base.geom, &r, &length);
   dsDrawCylinder(dBodyGetPosition(base.body), dBodyGetRotation(base.body), length, r);
 }
@@ -489,8 +494,11 @@ void drawArmSide()
   double G = 248.0/255.0;
   double B = 255.0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawBox(dBodyGetPosition(bodyparts1[0].body), dBodyGetRotation(bodyparts1[0].body), parts1_length_04);
   dsDrawBox(dBodyGetPosition(bodyparts1[4].body), dBodyGetRotation(bodyparts1[4].body), parts1_length_04);
@@ -535,8 +543,11 @@ void drawArmCenter()
   double G = 102.0/255.0;
   double B = 102.0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawBox(dBodyGetPosition(bodyparts1[1].body), dBodyGetRotation(bodyparts1[1].body), parts1_length_13);
   dsDrawBox(dBodyGetPosition(bodyparts1[2].body), dBodyGetRotation(bodyparts1[2].body), parts1_length_2);
@@ -565,8 +576,11 @@ void drawGripper_start()
   double G = 0/255.0;
   double B = 0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawCylinder(dBodyGetPosition(bodyparts6[0].body),dBodyGetRotation(bodyparts6[0].body), parts6_length, parts6_r);
 }
@@ -582,9 +596,11 @@ void drawGripper()
   double G = 165.0/255.0;
   double B = 165.0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //透明にしたけりゃこっちのコメントアウトをはずせ
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawCylinder(dBodyGetPosition(bodyparts6[1].body),dBodyGetRotation(bodyparts6[1].body), parts6_length[0], parts6_r[0]);
   dsDrawCylinder(dBodyGetPosition(bodyparts6[2].body),dBodyGetRotation(bodyparts6[2].body), parts6_length[1], parts6_r[1]);
@@ -602,8 +618,11 @@ void drawGripper_edge()
   double G = 82.0/255.0;
   double B = 222.0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawCylinder(dBodyGetPosition(bodyparts6[4].body),dBodyGetRotation(bodyparts6[4].body), parts6_length, parts6_r);
 }
@@ -618,8 +637,12 @@ void drawSensor()
   G = 189.0/255.0;
   B = 194.0/255.0;
 
+  #ifndef Skeleton
   dsSetColor(R,G,B);
-  //dsSetColorAlpha(R, G, B, 0.3);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
+
   dBodyGetRotation(sensor);
   dsDrawSphere(dBodyGetPosition(sensor), dBodyGetRotation(sensor), r);
 }
