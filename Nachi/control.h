@@ -2,6 +2,8 @@
 #define CONTROL_H_
 #include "area_struct.h"
 
+bool YesorNo();
+int input_arg(int argc, char* argv[]);
 int CountNumbersOfTextLines(std::string fileName);
 void Input_Data(std::string fileName);
 

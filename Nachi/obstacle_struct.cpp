@@ -8,7 +8,7 @@ extern dJointGroupID contactgroup;            // 接触点グループ
 extern MyObject boxparts;
 extern dJointID boxjoint;
 extern dsFunctions   fn;                      // ドロースタッフの描画関数
-
+extern dReal StartP[3],GoalP[3];
 
 void makeBox()
 {
@@ -47,21 +47,16 @@ void drawBox()
   double R = 0.0/255.0;
   double G = 191.0/255.0;
   double B = 255.0/255.0;
-  //dsSetColor(R,G,B);
-  dsSetColorAlpha(R, G, B, 0.25);
+
+  #ifdef Skeleton
+  dsSetColor(R,G,B);
+  #else
+  dsSetColorAlpha(R, G, B, 0.3);
+  #endif
 
   dsDrawBox(dBodyGetPosition(boxparts.body), dBodyGetRotation(boxparts.body), box_length);
 
-  dReal tmpP1[3],tmpP2[3];
   dMatrix3 tmpR1,tmpR2;
-
-  tmpP1[0] = 0.35;
-  tmpP1[1] = 0.35;
-  tmpP1[2] = 0.40;
-
-  tmpP2[0] = 0.2;
-  tmpP2[1] = -0.35;
-  tmpP2[2] = 0.10;
 
   double R2 = 255.0/255.0;
   double G2 = 20.0/255.0;
@@ -70,8 +65,8 @@ void drawBox()
   dsSetColor(R2,G2,B2);
 
   dRSetIdentity(tmpR1);
-  dsDrawSphere(tmpP1, tmpR1, 0.02);
+  dsDrawSphere(StartP, tmpR1, 0.02);
   dRSetIdentity(tmpR2);
-  dsDrawSphere(tmpP2, tmpR2, 0.02);
+  dsDrawSphere(GoalP, tmpR2, 0.02);
 
 }
