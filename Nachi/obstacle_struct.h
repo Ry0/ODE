@@ -2,6 +2,9 @@
 #define OBSTACLE_STRUCT_H_
 #include "area_struct.h"
 
-void makeBox();
+void initObstacleFromFile(std::string fileName);
+//void makeBox();
 void drawBox();
+
+void drawStartandGoal();
 #endif

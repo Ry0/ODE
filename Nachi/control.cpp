@@ -7,6 +7,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+/*---------------------------------------------------------------------- ↓グローバル変数定義ここから↓ -------------------------------------------------------------------------------*/
+extern dWorldID world;                   // 動力学計算用のワールド
+
 extern dReal  THETA[7];                // 関節の目標角度[rad]
 extern dReal min_angle[6]; // 各関節の最小角度[rad]
 extern dReal max_angle[6]; // 各関節の最小角度[rad]
@@ -24,11 +27,13 @@ extern dReal l[7];                     // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
 extern dReal StartP[3],GoalP[3];
+/*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
+
 
 bool YesorNo(){
   string Confirm;
 
-  cout << "上のモードで始めます。よければ「y」だめなら「n」を入力してEnter" << endl;
+  cout << "上のモードで始めます。よければ「y」、だめなら「n」を入力してEnter" << endl;
   while(1){
     cin >> Confirm;
     if(Confirm == "n"){

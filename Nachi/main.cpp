@@ -3,17 +3,7 @@
 #include "control.h"
 #include "obstacle_struct.h"
 
-// #define PLOT
-#ifdef PLOT
-#include <deque>
-#include "pipestream.h"
-using namespace ode_utils;
-deque<PlotData> plotData;
-ps::pipestream *gnuplot;
-
-double times = 0;
-int cnt = 0;
-#endif
+/*---------------------------------------------------------------------- ↓グローバル変数定義ここから↓ -------------------------------------------------------------------------------*/
 
 dWorldID      world;                   // 動力学計算用のワールド
 dSpaceID      space;                   // 衝突検出用のスペース
@@ -51,33 +41,45 @@ vector< POINT > pathdata;             // 経路データのxyz座標
 dReal StartP[3] = {0.0};              // 計画経路のスタート地点
 dReal GoalP[3] = {0.0};               // 計画経路のゴール地点
 
-static int ModeSelector; // 自由操作モードと経路データ読み込みモード
+int numObstacle = 0;
+double *xMin, *xMax;
+double *yMin, *yMax;
+double *zMin, *zMax;
+
+static int ModeSelector;  // 自由操作モードと経路データ読み込みモード
+/*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
+
 
 /*** 視点と視線の設定 ***/
 void start()
 {
-  float xyz[3] = {    1.5f, 0.65f, 0.4f};         // 視点[m]
-  float hpr[3] = { -160.0f, 4.5f, 0.0f};          // 視線[°]
-  dsSetViewpoint(xyz, hpr);                       // 視点と視線の設定
+  float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
+  float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
+  dsSetViewpoint(xyz, hpr);              // 視点と視線の設定
 }
 
-// POINT p = {0.35, 0.35, 0.20};          //?わっからーん
 
-void simLoop(int pause)
+// GNUPLOTにプロットする用関数
+#ifdef PLOT
+#include <deque>
+#include "pipestream.h"
+using namespace ode_utils;
+deque<PlotData> plotData;
+ps::pipestream* gnuplot;
+
+double times = 0;
+int cnt = 0;
+
+void plot(int pause)
 {
-  // P[0] = 0.4;
-  // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
-  // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
-
-  std::cout << "step: " << i << std::endl;
-
-  #ifdef PLOT
-  if(!pause){
-    PlotData d = { times, P[0], P[1], P[2] }; // x, y, z
+  if (!pause) {
+    PlotData d = {times, P[0], P[1], P[2]};  // x, y, z
     plotData.push_back(d);
 
-    if (cnt%10 == 0) {
-      *gnuplot << "splot \"./data/cube.dat\" using 1:2:3 with lines lw 5 lt rgb \"#696969\" title \"Obstacle\", \\\n '-' t 'Trajectory' with points pt 7 ps 1 lt rgb \"#F92500\"" << ps::endl;
+    if (cnt % 10 == 0) {
+      *gnuplot << "splot \"./data/cube.dat\" using 1:2:3 with lines lw 5 lt rgb \"#696969\" title "
+                  "\"Obstacle\", \\\n '-' t 'Trajectory' with points pt 7 ps 1 lt rgb \"#F92500\""
+               << ps::endl;
       deque<PlotData>::iterator it = plotData.begin();
       while (it != plotData.end() ) {
         *gnuplot << (*it).x << " " << (*it).y << " " << (*it).z << ps::endl;
@@ -86,7 +88,7 @@ void simLoop(int pause)
       *gnuplot << "e" << ps::endl;
     }
 
-    while (plotData.size() > 600) {
+    while (plotData.size() > 300) {
       plotData.pop_front();
     }
   }
@@ -97,6 +99,19 @@ void simLoop(int pause)
     times += 0.01;
     ++cnt;
   }
+}
+#endif
+
+
+void simLoop(int pause)
+{
+  // P[0] = 0.4;
+  // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
+  // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
+
+  std::cout << "step: " << i << std::endl;
+  #ifdef PLOT
+  plot(pause);
   #endif
 
   yugan_a();
@@ -115,6 +130,7 @@ void simLoop(int pause)
   if(ModeSelector == 0){
     drawP();                                      // 目標位置の描画
   } else if(ModeSelector == 1) {
+    drawStartandGoal();
     printPosition(pathdata, i);
     drawBox();
   }
@@ -180,10 +196,9 @@ int main(int argc, char* argv[])
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
 
+  initObstacleFromFile("./data/test_arm.dat");
   ModeSelector = input_arg(argc, argv);
-  if(ModeSelector == 1){
-    makeBox();
-  }else if(ModeSelector == 2){
+  if(ModeSelector == 2){
     return -1;
   }
 
@@ -192,7 +207,7 @@ int main(int argc, char* argv[])
   }
 
 
-#ifdef PLOT
+  #ifdef PLOT
   gnuplot = new ps::pipestream( "gnuplot -geometry 480x480" );
   *gnuplot << "set ticslevel 0"<<ps::endl;
   *gnuplot << "set view 70, 110, 1, 1"<<ps::endl;
@@ -206,7 +221,7 @@ int main(int argc, char* argv[])
   *gnuplot << "set mxtics 0.2"<<ps::endl;
   *gnuplot << "set mytics 0.2"<<ps::endl;
   *gnuplot << "set mztics 0.2"<<ps::endl;
-#endif
+  #endif
 
   dsSimulationLoop(argc, argv, 640, 480, &fn);    // シミュレーションループ
   dSpaceDestroy(space);                           // スペースの破壊

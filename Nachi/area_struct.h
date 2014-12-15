@@ -30,6 +30,7 @@ using namespace std;
 #endif
 
 // #define Skeleton
+// #define PLOT
 
 typedef struct {
   dBodyID body;                        // ボディのID番号
