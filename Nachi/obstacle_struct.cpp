@@ -17,51 +17,6 @@ extern double *yMin, *yMax;
 extern double *zMin, *zMax;
 /*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
 
-// void makeBox()
-// {
-//   dMass mass;                                    // 質量パラメータ
-
-//   dReal  box_mass  = 0.02;// 質量
-//   dReal  box_x_length = 0.1;
-//   dReal  box_y_length = 0.1;
-//   dReal  box_z_length = 0.9;
-
-//   dReal  box_start_x = 0.35;// 重心 y
-//   dReal  box_start_y = 0.05;// 重心 y
-//   dReal  box_start_z = 0.45;// 重心 z
-
-//   boxparts.body  = dBodyCreate(world);
-//   dMassSetZero(&mass);
-//   dMassSetBoxTotal(&mass, box_mass, box_x_length, box_y_length, box_z_length);
-//   dBodySetMass(boxparts.body, &mass);
-
-//   boxparts.geom = dCreateBox(space, box_x_length, box_y_length, box_z_length);
-//   dGeomSetBody(boxparts.geom, boxparts.body);
-//   dBodySetPosition(boxparts.body, box_start_x, box_start_y, box_start_z);
-
-//   //パーツの合体
-//   boxjoint = dJointCreateFixed(world, 0);  // 固定ジョイント
-//   dJointAttach(boxjoint, boxparts.body, 0);
-//   dJointSetFixed(boxjoint);
-
-// }
-// void drawBox()
-// {
-//   dReal box_length[] = {0.1, 0.1, 0.9};
-
-//   double R = 0.0/255.0;
-//   double G = 191.0/255.0;
-//   double B = 255.0/255.0;
-
-//   #ifdef Skeleton
-//   dsSetColor(R,G,B);
-//   #else
-//   dsSetColorAlpha(R, G, B, 0.3);
-//   #endif
-
-//   dsDrawBox(dBodyGetPosition(boxparts.body), dBodyGetRotation(boxparts.body), box_length);
-
-// }
 void initObstacleFromFile(std::string fileName)
 {
   if (xMin != NULL)
@@ -132,25 +87,7 @@ void drawBox()
 
 }
 
-// void drawBox()
-// {
-//   dReal box_length[] = {0.1, 0.1, 0.9};
 
-//   double R = 0.0/255.0;
-//   double G = 191.0/255.0;
-//   double B = 255.0/255.0;
-//   dMatrix3 tmpR;
-//   dReal  GravityCenter[3] = {0.35, 0.05, 0.45};// 重心 y
-
-//   #ifdef Skeleton
-//   dsSetColor(R,G,B);
-//   #else
-//   dsSetColorAlpha(R, G, B, 0.3);
-//   #endif
-//   dRSetIdentity(tmpR);
-//   dsDrawBox(GravityCenter, tmpR, box_length);
-
-// }
 
 void drawStartandGoal()
 {

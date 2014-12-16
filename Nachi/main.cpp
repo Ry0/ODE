@@ -196,9 +196,11 @@ int main(int argc, char* argv[])
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
 
-  initObstacleFromFile("./data/test_arm.dat");
   ModeSelector = input_arg(argc, argv);
-  if(ModeSelector == 2){
+
+  if(ModeSelector == 1){
+    initObstacleFromFile("./data/test_arm.dat");
+  }else if(ModeSelector == 2){
     return -1;
   }
 
