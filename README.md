@@ -7,6 +7,9 @@
 株式会社不二越のNachi、MZ07のシミュレーション  
 ![Nachi](https://dl.dropboxusercontent.com/u/23873125/Markdown/Nachi_MZ072.jpg)
 
+### 更新情報
+2014.12.16 ファイル引数を指定するようにしたよ
+
 ## [2. RobotArmTest](https://github.com/Ry0/ODE/tree/master/RobotArmTest)
 ロボットアームのシミュレーションの準備
 
