@@ -27,10 +27,13 @@ using namespace std;
 #define dsDrawSphere   dsDrawSphereD
 #define dsDrawCapsule  dsDrawCapsuleD
 #define dsDrawCylinder dsDrawCylinderD
+#define dsDrawLine     dsDrawLineD
 #endif
 
 // #define Skeleton
+#define RRT
 // #define PLOT
+// #define PrintStatus
 
 typedef struct {
   dBodyID body;                        // ボディのID番号

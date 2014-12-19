@@ -41,6 +41,14 @@ vector< POINT > pathdata;             // 経路データのxyz座標
 dReal StartP[3] = {0.0};              // 計画経路のスタート地点
 dReal GoalP[3] = {0.0};               // 計画経路のゴール地点
 
+vector< POINT > pStart;
+vector< POINT > pEnd;
+vector< POINT > RRT_path;
+vector< POINT > RRT_path_mod;
+int RRT_node_num = 0;
+int RRT_path_num = 0;
+int RRT_path_mod_num = 0;
+
 int numObstacle = 0;
 double *xMin, *xMax;
 double *yMin, *yMax;
@@ -116,7 +124,10 @@ void simLoop(int pause)
 
   yugan_a();
   inverseKinematics();
-  // printEndArmPosition();
+
+  #ifdef PrintStatus
+  printEndArmPosition();
+  #endif
   Pcontrol();                                      // P制御
   dWorldStep(world, 0.01);                         // 動力学計算
   drawArmCenter();                                 // ロボットの描画
@@ -126,6 +137,12 @@ void simLoop(int pause)
   drawGripper_edge();
   drawBase();
   drawSensor();                                   // 先端位置の描画
+
+  #ifdef RRT
+  printPath_mod();
+  printPath();
+  printRRT();
+  #endif
 
   if(ModeSelector == 0){
     drawP();                                      // 目標位置の描画
@@ -201,6 +218,11 @@ int main(int argc, char* argv[])
 
   if(ModeSelector == 1){
     initObstacleFromFile("./data/test_arm.dat");
+    #ifdef RRT
+    Input_RRT_Data("./data/RRT.dat");
+    Input_RRTPath_Data("./data/path_data.dat");
+    Input_RRTPath_mod_Data("./data/path_data_mod.dat");
+    #endif
   }else if(ModeSelector == 2){
     return -1;
   }
