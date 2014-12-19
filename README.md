@@ -8,7 +8,9 @@
 ![Nachi](https://dl.dropboxusercontent.com/u/23873125/Markdown/Nachi_MZ072.jpg)
 
 ### 更新情報
-2014.12.16 ファイル引数を指定するようにしたよ
+* 2014.12.16 ファイル引数を指定するようにしたよ
+* 2014.12.19 RRTの枝を表示するようにした。
+* ただし関数は冗長  
 
 ## [2. RobotArmTest](https://github.com/Ry0/ODE/tree/master/RobotArmTest)
 ロボットアームのシミュレーションの準備
