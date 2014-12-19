@@ -168,7 +168,7 @@ void inverseKinematics()
   double P5y = Py - (l[5] + l[6])*a[1];
   double P5z = Pz - (l[5] + l[6])*a[2];
 
-  printf("Target  Position: x=%7.3f y=%7.3f z=%7.3f \n", Px, Py, Pz);
+  // printf("Target  Position: x=%7.3f y=%7.3f z=%7.3f \n", Px, Py, Pz);
 
   double tmpL  = sqrt(P5x * P5x + P5y * P5y);
   double P1P   = sqrt(P5x * P5x + P5y * P5y
@@ -245,7 +245,7 @@ void inverseKinematics()
   for (int i = 1; i < 7; ++i){
     NowJoint[i] = dJointGetHingeAngle(joint[i]);
   }
-  PrintAngle(NowJoint);
+  //PrintAngle(NowJoint);
 }
 
 
