@@ -134,6 +134,7 @@ void simLoop(int pause)
     printPosition(pathdata, i);
     drawBox();
   }
+
   i++;
 }
 
