@@ -27,6 +27,15 @@ extern dReal l[7];                     // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
 extern dReal StartP[3],GoalP[3];
+
+
+extern vector< POINT > pStart;
+extern vector< POINT > pEnd;
+extern vector< POINT > RRT_path;
+extern vector< POINT > RRT_path_mod;
+extern int RRT_node_num;
+extern int RRT_path_num;
+extern int RRT_path_mod_num;
 /*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
 
 
@@ -90,6 +99,7 @@ int CountNumbersOfTextLines(std::string fileName){
 }
 
 
+
 void Input_Data(std::string fileName)
 {
   std::ifstream input(fileName.c_str());
@@ -109,6 +119,124 @@ void Input_Data(std::string fileName)
   cout << "ファイル読み込み成功" << endl;
 
   input.close();
+}
+
+
+
+void Input_RRT_Data(std::string fileName)
+{
+  std::ifstream input(fileName.c_str());
+  RRT_node_num = CountNumbersOfTextLines(fileName);
+
+  pStart.resize(RRT_node_num/4);
+  pEnd.resize(RRT_node_num/4);
+
+  cout << "行数 = " << RRT_node_num << endl;
+  for (int i = 0; i < RRT_node_num/4; ++i){
+    input >> pStart[i].x >> pStart[i].y >> pStart[i].z;
+    input >> pEnd[i].x >> pEnd[i].y >> pEnd[i].z;
+  }
+
+  input.close();
+}
+
+
+
+void printRRT()
+{
+  double R = 169.0/255.0;
+  double G = 169.0/255.0;
+  double B = 169.0/255.0;
+
+  double p1[3], p2[3];
+
+  for (int i = 0; i < RRT_node_num/4; ++i){
+    p1[0] = pStart[i].x;
+    p1[1] = pStart[i].y;
+    p1[2] = pStart[i].z;
+    p2[0] = pEnd[i].x;
+    p2[1] = pEnd[i].y;
+    p2[2] = pEnd[i].z;
+    dsSetColorAlpha(R, G, B, 0.3);
+    dsDrawLineD(p1, p2);
+  }
+}
+
+
+
+void Input_RRTPath_Data(std::string fileName)
+{
+  std::ifstream input(fileName.c_str());
+  RRT_path_num = CountNumbersOfTextLines(fileName);
+  RRT_path.resize(RRT_path_num);
+
+  for (int i = 0; i < RRT_path_num; ++i){
+    input >> RRT_path[i].x >> RRT_path[i].y >> RRT_path[i].z;
+  }
+
+  cout << "RRT_path_num = " << RRT_path_num << endl;
+  input.close();
+}
+
+
+
+void printPath()
+{
+  double R = 255.0/255.0;
+  double G = 51.0/255.0;
+  double B = 0.0/255.0;
+
+  double p1[3], p2[3];
+
+  for (int i = 1; i < RRT_path_num; ++i){
+    p1[0] = RRT_path[i-1].x;
+    p1[1] = RRT_path[i-1].y;
+    p1[2] = RRT_path[i-1].z;
+    p2[0] = RRT_path[i].x;
+    p2[1] = RRT_path[i].y;
+    p2[2] = RRT_path[i].z;
+    dsSetColorAlpha(R, G, B, 0.3);
+    dsDrawLineD(p1, p2);
+  }
+}
+
+
+
+void Input_RRTPath_mod_Data(std::string fileName)
+{
+  std::ifstream input(fileName.c_str());
+  RRT_path_mod_num = CountNumbersOfTextLines(fileName);
+  RRT_path_mod.resize(RRT_path_num);
+
+  for (int i = 0; i < RRT_path_num; ++i){
+    input >> RRT_path_mod[i].x >> RRT_path_mod[i].y >> RRT_path_mod[i].z;
+  }
+
+  cout << "RRT_path_mod_num = " << RRT_path_mod_num << endl;
+  input.close();
+}
+
+
+
+void printPath_mod()
+{
+  double R = 0./255.0;
+  double G = 0.0/255.0;
+  double B = 204.0/255.0;
+
+  double p1[3], p2[3];
+
+  for (int i = 1; i < RRT_path_mod_num; ++i){
+    p1[0] = RRT_path_mod[i-1].x;
+    p1[1] = RRT_path_mod[i-1].y;
+    p1[2] = RRT_path_mod[i-1].z;
+    p2[0] = RRT_path_mod[i].x;
+    p2[1] = RRT_path_mod[i].y;
+    p2[2] = RRT_path_mod[i].z;
+    dsSetColorAlpha(R, G, B, 0.3);
+
+    dsDrawLineD(p1, p2);
+  }
 }
 
 
@@ -158,7 +286,6 @@ void inverseKinematics()
   double Px, Py, Pz;
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
   dReal CalTheta[7] = {0.0};       // 目標角度計算用
-  dReal  NowJoint[7] = {0.0};
   int CheckAnswer = 0;
 
   double a2[3];
@@ -168,7 +295,7 @@ void inverseKinematics()
   double P5y = Py - (l[5] + l[6])*a[1];
   double P5z = Pz - (l[5] + l[6])*a[2];
 
-  printf("Target  Position: x=%7.3f y=%7.3f z=%7.3f \n", Px, Py, Pz);
+  // printf("Target  Position: x=%7.3f y=%7.3f z=%7.3f \n", Px, Py, Pz);
 
   double tmpL  = sqrt(P5x * P5x + P5y * P5y);
   double P1P   = sqrt(P5x * P5x + P5y * P5y
@@ -242,10 +369,13 @@ void inverseKinematics()
     }
   }
 
+  #ifdef PrintStatus
+  dReal  NowJoint[7] = {0.0};
   for (int i = 1; i < 7; ++i){
     NowJoint[i] = dJointGetHingeAngle(joint[i]);
   }
   PrintAngle(NowJoint);
+  #endif
 }
 
 
@@ -255,8 +385,6 @@ void PrintAngle(dReal NowJoint[]){
   printf("\nOutput Angle   : 1=%7.2f 2=%7.2f 3=%7.2f \n",NowJoint[1] * 180 / M_PI, NowJoint[2]*180/M_PI, NowJoint[3]*180/M_PI);
   printf("                 4=%7.2f 5=%7.2f 6=%7.2f [deg]\n\n", NowJoint[4] * 180 / M_PI, NowJoint[5] * 180 / M_PI, NowJoint[6] * 180 / M_PI);
 }
-
-
 
 
 
@@ -286,7 +414,7 @@ void printPosition(std::vector<POINT> &path, int loop)
   if(loop - 150 < 0){
     i = 0;
   }else{
-    i = loop - 150;
+    i = loop - 320;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
