@@ -414,7 +414,7 @@ void printPosition(std::vector<POINT> &path, int loop)
   if(loop - 150 < 0){
     i = 0;
   }else{
-    i = loop - 150;
+    i = loop - 320;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){

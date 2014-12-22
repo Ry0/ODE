@@ -113,9 +113,6 @@ void plot(int pause)
 
 void simLoop(int pause)
 {
-  // P[0] = 0.4;
-  // P[1] = 0.1+0.16*pow(sin(0.01*i),3);
-  // P[2] = 0.3 + 0.13*cos(0.01*i) - 0.05*cos(2*0.01*i) - 0.02*cos(3*0.01*i) - 0.01*cos(4*0.01*i);
 
   // std::cout << "step: " << i << std::endl;
   #ifdef PLOT
