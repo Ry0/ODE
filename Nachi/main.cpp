@@ -61,8 +61,10 @@ static int ModeSelector;  // 自由操作モードと経路データ読み込み
 /*** 視点と視線の設定 ***/
 void start()
 {
-  float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
-  float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
+  // float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
+  // float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
+  float xyz[3] = {0.7089,0.4235,0.7400};    // 視点[m]
+  float hpr[3] = {-145.0000,-28.5000,0.0000};  // 視線[°]
   dsSetViewpoint(xyz, hpr);              // 視点と視線の設定
 }
 
@@ -214,11 +216,11 @@ int main(int argc, char* argv[])
   ModeSelector = input_arg(argc, argv);
 
   if(ModeSelector == 1){
-    initObstacleFromFile("./data/test_arm.dat");
+    initObstacleFromFile("./data/RRT/test_arm.dat");
     #ifdef RRT
-    Input_RRT_Data("./data/RRT.dat");
-    Input_RRTPath_Data("./data/path_data.dat");
-    Input_RRTPath_mod_Data("./data/path_data_mod.dat");
+    Input_RRT_Data("./data/RRT/data.dat");
+    Input_RRTPath_Data("./data/RRT/path_data.dat");
+    Input_RRTPath_mod_Data("./data/RRT/path_data_mod.dat");
     #endif
   }else if(ModeSelector == 2){
     return -1;

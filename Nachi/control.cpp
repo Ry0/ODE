@@ -157,7 +157,7 @@ void printRRT()
     p2[0] = pEnd[i].x;
     p2[1] = pEnd[i].y;
     p2[2] = pEnd[i].z;
-    dsSetColorAlpha(R, G, B, 0.3);
+    dsSetColorAlpha(R, G, B, 0.5);
     dsDrawLineD(p1, p2);
   }
 }
@@ -195,7 +195,7 @@ void printPath()
     p2[0] = RRT_path[i].x;
     p2[1] = RRT_path[i].y;
     p2[2] = RRT_path[i].z;
-    dsSetColorAlpha(R, G, B, 0.3);
+    dsSetColorAlpha(R, G, B, 0.5);
     dsDrawLineD(p1, p2);
   }
 }
@@ -233,7 +233,7 @@ void printPath_mod()
     p2[0] = RRT_path_mod[i].x;
     p2[1] = RRT_path_mod[i].y;
     p2[2] = RRT_path_mod[i].z;
-    dsSetColorAlpha(R, G, B, 0.3);
+    dsSetColorAlpha(R, G, B, 0.7);
 
     dsDrawLineD(p1, p2);
   }
@@ -411,10 +411,10 @@ void printPosition(std::vector<POINT> &path, int loop)
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
 
-  if(loop - 150 < 0){
+  if(loop - 100 < 0){
     i = 0;
   }else{
-    i = loop - 320;
+    i = loop - 100;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
