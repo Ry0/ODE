@@ -22,7 +22,7 @@ void inverseKinematics();
 void PrintAngle(dReal NowJoint[]);
 void yugan_a();
 
-void printPosition(std::vector<POINT> &path, int loop);
+void printPosition(std::vector<POINT> &path, int loop, int DrawLength);
 
 void plot(int pause);
 #endif

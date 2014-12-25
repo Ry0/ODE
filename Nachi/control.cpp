@@ -400,7 +400,7 @@ void yugan_a()
 #define B(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3]
 #define G(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+1]
 #define R(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+2]
-void printPosition(std::vector<POINT> &path, int loop)
+void printPosition(std::vector<POINT> &path, int loop, int DrawLength)
 {
   dMatrix3 tmpR;
   double R = 0.0;
@@ -411,10 +411,10 @@ void printPosition(std::vector<POINT> &path, int loop)
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
 
-  if(loop - 150 < 0){
+  if(loop - DrawLength < 0){
     i = 0;
   }else{
-    i = loop - 320;
+    i = loop - DrawLength;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
