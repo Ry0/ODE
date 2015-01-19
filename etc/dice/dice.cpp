@@ -1,5 +1,6 @@
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
+#include <sys/time.h>
 
 #ifdef dDOUBLE
 #define dsDrawBox      dsDrawBoxD
