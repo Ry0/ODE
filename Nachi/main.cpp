@@ -57,12 +57,13 @@ double *zMin, *zMax;
 static int ModeSelector;  // 自由操作モードと経路データ読み込みモード
 /*---------------------------------------------------------------------- ↑グローバル変数定義ここまで↑ -------------------------------------------------------------------------------*/
 
-
 /*** 視点と視線の設定 ***/
 void start()
 {
-  float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
-  float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
+  // float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
+  // float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
+  float xyz[3] = {1.0073,0.4131,0.5800};    // 視点[m]
+  float hpr[3] = {-155.5000,-12.5000,0.0000};  // 視線[°]
   dsSetViewpoint(xyz, hpr);              // 視点と視線の設定
 }
 
@@ -144,9 +145,9 @@ void simLoop(int pause)
   if(ModeSelector == 0){
     drawP();                                      // 目標位置の描画
   } else if(ModeSelector == 1) {
-    drawStartandGoal();
+    // drawStartandGoal();
     printPosition(pathdata, i, 100);
-    drawBox();
+    // drawBox();
   }
 
   i++;
