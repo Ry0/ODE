@@ -146,7 +146,7 @@ void simLoop(int pause)
     drawP();                                      // 目標位置の描画
   } else if(ModeSelector == 1) {
     drawStartandGoal();
-    // printPosition(pathdata, i, 250);
+    printPosition(pathdata, i, 250);
     drawBox();
   }
 
