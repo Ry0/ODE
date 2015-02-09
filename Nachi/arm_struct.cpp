@@ -102,63 +102,63 @@ void  makeArm()
   dMass mass;                                    // 質量パラメータ
   dMatrix3 R;
 
-  dReal  parts1_mass[9]  = {0.04, 0.04, 0.2, 0.04, 0.04, 0.01, 0.01, 0.01, 0.01};// 質量
+  dReal  parts1_mass[9]     = {0.04, 0.04, 0.2, 0.04, 0.04, 0.01, 0.01, 0.01, 0.01};// 質量
   dReal  parts1_x_length[5] = {0.15, 0.15, 0.15, 0.15, 0.15};
   dReal  parts1_y_length[5] = {0.02, 0.03, 0.1, 0.03, 0.02};
   dReal  parts1_z_length[5] = {0.12, 0.12, 0.07, 0.12, 0.12};
-  dReal  parts1_r = 0.075;
-  dReal  parts1_l[4] = {0.02, 0.03, 0.03, 0.02};
-  dReal  parts1_start_x = 0.0;// 重心 x
-  dReal  parts1_start_y[9] = {-0.09, -0.065, 0, 0.065, 0.09, -0.09, -0.065, 0.065, 0.09};// 重心 y
-  dReal  parts1_start_z[9] = {0.26, 0.26, 0.235, 0.26, 0.26, 0.32, 0.32, 0.32, 0.32};// 重心 z
-  dReal  parts1_hinge_y[4] = {-0.08, -0.05, 0.05, 0.08};
+  dReal  parts1_r           = 0.075;
+  dReal  parts1_l[4]        = {0.02, 0.03, 0.03, 0.02};
+  dReal  parts1_start_x     = 0.0;// 重心 x
+  dReal  parts1_start_y[9]  = {-0.09, -0.065, 0, 0.065, 0.09, -0.09, -0.065, 0.065, 0.09};// 重心 y
+  dReal  parts1_start_z[9]  = {0.26, 0.26, 0.235, 0.26, 0.26, 0.32, 0.32, 0.32, 0.32};// 重心 z
+  dReal  parts1_hinge_y[4]  = {-0.08, -0.05, 0.05, 0.08};
 
-  dReal  parts2_mass[14]  = {0.05, 0.05, 0.35, 0.05, 0.05, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.05};// 質量
+  dReal  parts2_mass[14]    = {0.05, 0.05, 0.35, 0.05, 0.05, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.05};// 質量
   dReal  parts2_x_length[5] = {0.1};
   dReal  parts2_y_length[5] = {0.02, 0.03, 0.1, 0.03, 0.02};
   dReal  parts2_z_length[5] = {0.17, 0.17, 0.21, 0.17, 0.17};
-  dReal  parts2_r = 0.05;
-  dReal  parts2_l[9] = {0.02, 0.03, 0.03, 0.02, 0.02, 0.03, 0.03, 0.02, 0.1};
-  dReal  parts2_start_x = 0.0;// 重心 x
+  dReal  parts2_r           = 0.05;
+  dReal  parts2_l[9]        = {0.02, 0.03, 0.03, 0.02, 0.02, 0.03, 0.03, 0.02, 0.1};
+  dReal  parts2_start_x     = 0.0;// 重心 x
   dReal  parts2_start_y[14] = {-0.09, -0.065, 0, 0.065, 0.09, -0.09, -0.065, 0.065, 0.09, -0.09, -0.065, 0.065, 0.09, 0};// 重心 y
   dReal  parts2_start_z[14] = {0.59, 0.59, 0.45, 0.59, 0.59, 0.675, 0.675, 0.675, 0.675, 0.505, 0.505, 0.505, 0.505, 0.345};// 重心 z
-  dReal  parts2_hinge_y[4] = {-0.08, -0.05, 0.05, 0.08};
+  dReal  parts2_hinge_y[4]  = {-0.08, -0.05, 0.05, 0.08};
 
-  dReal  parts3_mass[5]  = {0.20, 0.02, 0.01, 0.005, 0.0025};// 質量
+  dReal  parts3_mass[5]     = {0.20, 0.02, 0.01, 0.005, 0.0025};// 質量
   dReal  parts3_x_length[3] = {0.1, 0.04, 0.06};
-  dReal  parts3_y_length = 0.1;
+  dReal  parts3_y_length    = 0.1;
   dReal  parts3_z_length[3] = {0.21, 0.12, 0.04};
-  dReal  parts3_r = 0.04;
-  dReal  parts3_start_x[5] = {0, 0.07, 0.02, 0.05, -0.01};// 重心 x
-  dReal  parts3_start_y = 0;// 重心 y
-  dReal  parts3_start_z[5] = {0.72, 0.635, 0.595, 0.695, 0.615};// 重心 z
-  dReal  parts3_hinge_x[4] = {0.07, 0.02, 0.05, -0.01};
-  dReal  parts3_hinge_z[4] = {0.635, 0.595, 0.695, 0.615};
+  dReal  parts3_r           = 0.04;
+  dReal  parts3_start_x[5]  = {0, 0.07, 0.02, 0.05, -0.01};// 重心 x
+  dReal  parts3_start_y     = 0;// 重心 y
+  dReal  parts3_start_z[5]  = {0.72, 0.635, 0.595, 0.695, 0.615};// 重心 z
+  dReal  parts3_hinge_x[4]  = {0.07, 0.02, 0.05, -0.01};
+  dReal  parts3_hinge_z[4]  = {0.635, 0.595, 0.695, 0.615};
 
-  dReal  parts4_mass[5]  = {0.05, 0.15, 0.4, 0.15, 0.05};// 質量
+  dReal  parts4_mass[5]     = {0.05, 0.15, 0.4, 0.15, 0.05};// 質量
   dReal  parts4_x_length[3] = {0.10, 0.10, 0.10};
   dReal  parts4_y_length[3] = {0.014, 0.08, 0.014};
   dReal  parts4_z_length[3] = {0.19, 0.14, 0.19};
-  dReal  parts4_start_x = 0;// 重心 x
-  dReal  parts4_start_y[5] = {-0.047, 0, 0.047, -0.047, 0.047};// 重心 y
-  dReal  parts4_start_z[5] = {0.92, 0.895, 0.92, 1.015, 1.015};// 重心 z
-  dReal  parts4_hinge_y[2] = {-0.04, 0.04};
+  dReal  parts4_start_x     = 0;// 重心 x
+  dReal  parts4_start_y[5]  = {-0.047, 0, 0.047, -0.047, 0.047};// 重心 y
+  dReal  parts4_start_z[5]  = {0.92, 0.895, 0.92, 1.015, 1.015};// 重心 z
+  dReal  parts4_hinge_y[2]  = {-0.04, 0.04};
 
-  dReal  parts5_mass[2]  = {0.08, 0.02};// 質量
-  dReal  parts5_x_length = 0.08;
-  dReal  parts5_y_length = 0.08;
-  dReal  parts5_z_length = 0.073;
-  dReal  parts5_start_x = 0;// 重心 x
-  dReal  parts5_start_y = 0;// 重心 y
-  dReal  parts5_start_z[2] = {1.0515, 1.015};// 重心 z
+  dReal  parts5_mass[2]     = {0.08, 0.02};// 質量
+  dReal  parts5_x_length    = 0.08;
+  dReal  parts5_y_length    = 0.08;
+  dReal  parts5_z_length    = 0.073;
+  dReal  parts5_start_x     = 0;// 重心 x
+  dReal  parts5_start_y     = 0;// 重心 y
+  dReal  parts5_start_z[2]  = {1.0515, 1.015};// 重心 z
 
-  dReal  parts6_mass[5]  = {0.02, 0.18, 0.1, 0.2, 0.2};// 質量
-  dReal  parts6_start_x[5] = {0, 0, 0, 0, 0};// 重心 x
-  dReal  parts6_start_y[5] = {0, 0, 0, 0, 0};// 重心 y
-  dReal  parts6_start_z[5] = {1.093, 1.118, 1.153, 1.198, 1.248};// 重心 z
+  dReal  parts6_mass[5]     = {0.02, 0.18, 0.1, 0.2, 0.2};// 質量
+  dReal  parts6_start_x[5]  = {0, 0, 0, 0, 0};// 重心 x
+  dReal  parts6_start_y[5]  = {0, 0, 0, 0, 0};// 重心 y
+  dReal  parts6_start_z[5]  = {1.093, 1.118, 1.153, 1.198, 1.248};// 重心 z
   dReal  parts6_z_length[5] = {0.01, 0.04, 0.03, 0.06, 0.04};  // 長さ
-  dReal  parts6_r[5]      = {0.04, 0.038, 0.02, 0.04, 0.05};  // 半径
-  dReal  parts6_hinge_z[4] = {1.098, 1.138, 1.168, 1.228};
+  dReal  parts6_r[5]        = {0.04, 0.038, 0.02, 0.04, 0.05};  // 半径
+  dReal  parts6_hinge_z[4]  = {1.098, 1.138, 1.168, 1.228};
 
   dRFromAxisAndAngle(R, 1, 0, 0, M_PI/2.0);
 
