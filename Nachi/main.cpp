@@ -62,8 +62,11 @@ void start()
 {
   // float xyz[3] = {1.5f, 0.65f, 0.4f};    // 視点[m]
   // float hpr[3] = {-160.0f, 4.5f, 0.0f};  // 視線[°]
-  float xyz[3] = {1.0073,0.4131,0.5800};    // 視点[m]
-  float hpr[3] = {-155.5000,-12.5000,0.0000};  // 視線[°]
+  // float xyz[3] = {1.0073,0.4131,0.5800};    // 視点[m]
+  // float hpr[3] = {-155.5000,-12.5000,0.0000};  // 視線[°]
+  float xyz[3] = {0.8419,0.3456,0.6300};    // 視点[m]
+  float hpr[3] = {-145.5000,-18.0000,0.0000};  // 視線[°]
+
   dsSetViewpoint(xyz, hpr);              // 視点と視線の設定
 }
 
@@ -146,8 +149,8 @@ void simLoop(int pause)
     drawP();                                      // 目標位置の描画
   } else if(ModeSelector == 1) {
     drawStartandGoal();
-    printPosition(pathdata, i, 250);
-    drawBox();
+    printPosition(pathdata, i, 200);
+    // drawBox();
   }
 
   i++;
