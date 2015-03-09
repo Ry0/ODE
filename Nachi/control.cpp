@@ -410,7 +410,6 @@ void printPosition(std::vector<POINT> &path, int loop, int DrawLength)
   int color = 0;
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
-
   if(loop - DrawLength < 0){
     i = 0;
   }else{
