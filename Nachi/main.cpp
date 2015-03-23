@@ -150,7 +150,7 @@ void simLoop(int pause)
   } else if(ModeSelector == 1) {
     drawStartandGoal();
     printPosition(pathdata, i, 200);
-    // drawBox();
+    drawBox();
   }
 
   i++;

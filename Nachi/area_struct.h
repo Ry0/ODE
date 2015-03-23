@@ -31,7 +31,7 @@ using namespace std;
 #endif
 
 // #define Skeleton
-// #define RRT
+#define RRT
 // #define PLOT
 // #define PrintStatus
 
