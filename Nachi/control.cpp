@@ -68,11 +68,18 @@ int input_arg(int argc, char* argv[])
     return 0;
   } else if (argc == 2) { // 引数を一つ指定されたら、そのファイルにしたがって軌道生成+障害物を立てる
     string ObstacleFile = string(argv[1]);
-    filename = PlotDataPass + ObstacleFile;
-    cout << "ファイルパスは " << filename << endl;
-    Input_Data(filename);
-    cout << "\n障害物回避モード" << endl;
-    return 1;
+    if (ObstacleFile == "-h"){
+      cout << "「./Nachi」で自由操作モードになってキーボードのs,d,f,j,k,lでロボットの手先位置を操作することができる" << endl;
+      cout << " z,x,c,vで手先の姿勢を変えることができる" << endl;
+      cout << "「./Nachi プロットデータ.dat」で事前に用意したデータで軌道を描くことができる" << endl;
+      return 2;
+    } else {
+      filename = PlotDataPass + ObstacleFile;
+      cout << "ファイルパスは " << filename << endl;
+      Input_Data(filename);
+      cout << "\n障害物回避モード" << endl;
+      return 1;
+    }
   } else {
     cout << "引数は1つだけにしてくださいな。" << endl;
     return 2;
@@ -259,21 +266,21 @@ void Pcontrol()
 void Vcontrol()
 {
   //dReal k =  20.0;
-  dReal fMax = 200.0;                   // 比例ゲイン，最大トルク
+  dReal fMax = 200.0;                                 // 比例ゲイン，最大トルク
 
   for (int j = 1; j < 7; j++) {
-    dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
-    dReal z = THETA[j] - tmp;                      // 残差
+    dReal tmp = dJointGetHingeAngle(joint[j]);        // 関節角の取得
+    dReal z = THETA[j] - tmp;                         // 残差
     if (z >=   M_PI) z -= 2.0 * M_PI;
     if (z <= - M_PI) z += 2.0 * M_PI;
     if(z > 0.01){
-      dJointSetHingeParam(joint[j],dParamVel, 1);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamVel, 1);     // 角速度の設定
       dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }else if(z < -0.01){
-      dJointSetHingeParam(joint[j],dParamVel, -1);  // 角速度の設定
-      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定)else{
+      dJointSetHingeParam(joint[j],dParamVel, -1);    // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }else{
-      dJointSetHingeParam(joint[j],dParamVel, 0);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamVel, 0);     // 角速度の設定
       dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }
   }
