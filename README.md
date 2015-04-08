@@ -21,7 +21,12 @@
 ### arm
 * めっちゃ初期の段階のロボットアームのソースコード
 * 3軸と6軸が混ざってる  
+
 ![arm](https://dl.dropboxusercontent.com/u/23873125/Markdown/arm.jpg)
+
+* 遊びで作ったNリンクアーム  
+
+![nlink](https://dl.dropboxusercontent.com/u/23873125/Markdown/nlink.png)
 
 ### etc
 * 他のODEで作ったシミュレーションと出村先生のサンプルコード  
