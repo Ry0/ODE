@@ -120,7 +120,6 @@ void inverseKinematics()
       THETA[i] = CalTheta[i-1];
     }
   }
-
 }
 
 
