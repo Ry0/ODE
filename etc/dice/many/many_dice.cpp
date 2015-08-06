@@ -1,5 +1,6 @@
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
+#include <time.h>
 
 #define ROW 5
 #define COL 5

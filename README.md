@@ -12,6 +12,13 @@
 * 2014.12.19 RRTの枝を表示するようにした。
 * ただし関数は冗長  
 
+```bash
+cd Nachi
+cmake .
+make
+./Nachi /Movie/T-RRT/Bspline.dat
+```
+
 ## [2. RobotArmTest](https://github.com/Ry0/ODE/tree/master/RobotArmTest)
 ロボットアームのシミュレーションの準備
 
@@ -31,6 +38,26 @@
 ### etc
 * 他のODEで作ったシミュレーションと出村先生のサンプルコード  
 
+##ODEのインストール
+[1. Nachi](https://github.com/Ry0/ODE/tree/master/Nachi)を実行するためにはOpenCVが必要．  
+[https://github.com/Ry0/my_ubuntu_setup/tree/master/OpenCV_install](https://github.com/Ry0/my_ubuntu_setup/tree/master/OpenCV_install)参照
 
+以下を実行
 
+```bash
+sudo apt-get install libode-dev
+sudo apt-get install libxmu-dev
+```
 
+###drawstuffインストール
+
+[http://sourceforge.net/projects/opende/files/ODE/0.13/](http://sourceforge.net/projects/opende/files/ODE/0.13/)からソースをダウンロード
+
+```bash
+sudo apt-get install automake libtool freeglut3-dev
+./configure --enable-release --with-x --enable-double-precision --with-libccd
+make
+sudo cp -r include/drawstuff /usr/local/include/
+sudo cp drawstuff/src/.libs/libdrawstuff.* /usr/local/lib
+sudo ldconfig
+```

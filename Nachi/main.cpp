@@ -220,9 +220,9 @@ int main(int argc, char* argv[])
   if(ModeSelector == 1){
     initObstacleFromFile("./data/test_arm.dat");
     #ifdef RRT
-    Input_RRT_Data("./data/RRT.dat");
-    Input_RRTPath_Data("./data/path_data.dat");
-    Input_RRTPath_mod_Data("./data/path_data_mod.dat");
+    Input_RRT_Data("./data/Movie/T-RRT/data.dat");
+    Input_RRTPath_Data("./data/Movie/T-RRT/path_data.dat");
+    Input_RRTPath_mod_Data("./data/Movie/T-RRT/path_data_mod.dat");
     #endif
   }else if(ModeSelector == 2){
     return -1;
