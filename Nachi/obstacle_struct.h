@@ -3,7 +3,6 @@
 #include "area_struct.h"
 
 void initObstacleFromFile(std::string fileName);
-//void makeBox();
 void drawBox();
 
 void drawStartandGoal();

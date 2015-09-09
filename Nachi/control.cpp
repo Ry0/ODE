@@ -68,11 +68,18 @@ int input_arg(int argc, char* argv[])
     return 0;
   } else if (argc == 2) { // 引数を一つ指定されたら、そのファイルにしたがって軌道生成+障害物を立てる
     string ObstacleFile = string(argv[1]);
-    filename = PlotDataPass + ObstacleFile;
-    cout << "ファイルパスは " << filename << endl;
-    Input_Data(filename);
-    cout << "\n障害物回避モード" << endl;
-    return 1;
+    if (ObstacleFile == "-h"){
+      cout << "「./Nachi」で自由操作モードになってキーボードのs,d,f,j,k,lでロボットの手先位置を操作することができる" << endl;
+      cout << " z,x,c,vで手先の姿勢を変えることができる" << endl;
+      cout << "「./Nachi プロットデータ.dat」で事前に用意したデータで軌道を描くことができる" << endl;
+      return 2;
+    } else {
+      filename = PlotDataPass + ObstacleFile;
+      cout << "ファイルパスは " << filename << endl;
+      Input_Data(filename);
+      cout << "\n障害物回避モード" << endl;
+      return 1;
+    }
   } else {
     cout << "引数は1つだけにしてくださいな。" << endl;
     return 2;
@@ -157,7 +164,7 @@ void printRRT()
     p2[0] = pEnd[i].x;
     p2[1] = pEnd[i].y;
     p2[2] = pEnd[i].z;
-    dsSetColorAlpha(R, G, B, 0.5);
+    dsSetColorAlpha(R, G, B, 0.3);
     dsDrawLineD(p1, p2);
   }
 }
@@ -195,7 +202,7 @@ void printPath()
     p2[0] = RRT_path[i].x;
     p2[1] = RRT_path[i].y;
     p2[2] = RRT_path[i].z;
-    dsSetColorAlpha(R, G, B, 0.5);
+    dsSetColorAlpha(R, G, B, 0.3);
     dsDrawLineD(p1, p2);
   }
 }
@@ -233,7 +240,7 @@ void printPath_mod()
     p2[0] = RRT_path_mod[i].x;
     p2[1] = RRT_path_mod[i].y;
     p2[2] = RRT_path_mod[i].z;
-    dsSetColorAlpha(R, G, B, 0.7);
+    dsSetColorAlpha(R, G, B, 0.3);
 
     dsDrawLineD(p1, p2);
   }
@@ -259,21 +266,21 @@ void Pcontrol()
 void Vcontrol()
 {
   //dReal k =  20.0;
-  dReal fMax = 200.0;                   // 比例ゲイン，最大トルク
+  dReal fMax = 200.0;                                 // 比例ゲイン，最大トルク
 
   for (int j = 1; j < 7; j++) {
-    dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
-    dReal z = THETA[j] - tmp;                      // 残差
+    dReal tmp = dJointGetHingeAngle(joint[j]);        // 関節角の取得
+    dReal z = THETA[j] - tmp;                         // 残差
     if (z >=   M_PI) z -= 2.0 * M_PI;
     if (z <= - M_PI) z += 2.0 * M_PI;
     if(z > 0.01){
-      dJointSetHingeParam(joint[j],dParamVel, 1);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamVel, 1);     // 角速度の設定
       dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }else if(z < -0.01){
-      dJointSetHingeParam(joint[j],dParamVel, -1);  // 角速度の設定
-      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定)else{
+      dJointSetHingeParam(joint[j],dParamVel, -1);    // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }else{
-      dJointSetHingeParam(joint[j],dParamVel, 0);  // 角速度の設定
+      dJointSetHingeParam(joint[j],dParamVel, 0);     // 角速度の設定
       dJointSetHingeParam(joint[j],dParamFMax, fMax); // トルクの設定
     }
   }
@@ -400,7 +407,7 @@ void yugan_a()
 #define B(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3]
 #define G(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+1]
 #define R(IMG, X, Y) ((uchar*)((IMG)->imageData + (IMG)->widthStep*(Y)))[(X)*3+2]
-void printPosition(std::vector<POINT> &path, int loop)
+void printPosition(std::vector<POINT> &path, int loop, int DrawLength)
 {
   dMatrix3 tmpR;
   double R = 0.0;
@@ -410,11 +417,10 @@ void printPosition(std::vector<POINT> &path, int loop)
   int color = 0;
   IplImage* img = cvCreateImage( cvSize(1, 1), IPL_DEPTH_8U, 3);
 
-
-  if(loop - 100 < 0){
+  if(loop - DrawLength < 0){
     i = 0;
   }else{
-    i = loop - 100;
+    i = loop - DrawLength;
   }
   for (; i < loop; ++i) {
     if((i/data_num)%2 == 0){
