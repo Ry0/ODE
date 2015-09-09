@@ -34,6 +34,7 @@ dReal  THETA[NUM] = {0.000000,
                      0.418879,
                      1.343904,
                      -0.261799};             // 関節の目標角度[rad]
+// dReal  THETA[NUM] = {0.0};
 double P[3],a[3],b[3];                 // 先端の位置，有顔ベクトル(a,b)
 
 dBodyID       sensor;        // センサ用のボディID
@@ -43,7 +44,7 @@ dJointID      sensor_joint;  // センサ固定用の関節
 void makeSensor()
 {
   dMass mass;
-  double sx = 0.0, sy = 0.0, sz = 2.545;  // センサの初期座標[m]
+  double sx = 0.0, sy = 0.0, sz = 2.645;  // センサの初期座標[m]
   double size = 0.01, weight = 0.00001; // センサのサイズ[m]と重量[kg]
 
   sensor = dBodyCreate(world);          // センサの生成
@@ -60,13 +61,13 @@ void makeSensor()
 // センサ位置の表示
 void printSensorPosition()
 {
-  // for (int i = 1; i < 10; ++i)
-  // {
-  //   printf("THETA[%d] = %lf\n", i,THETA[i]);
-  // }
+  for (int i = 1; i < 10; ++i)
+  {
+    printf("THETA[%d] = %lf\n", i,THETA[i]);
+  }
   double *pos = (double *) dBodyGetPosition(sensor);
-  printf("P*: x=%5.2f y=%5.2f z=%5.2f \n",pos[0],pos[1],pos[2]);
-  printf("P : x=%5.2f y=%5.2f z=%5.2f \n",P[0],P[1],P[2]);
+  printf("P*: x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
+  printf("P : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]);
 }
 
 // センサ姿勢(有顔ベクトル)の表示
@@ -144,7 +145,7 @@ void drawArm()
 
 void drawSensor()
 {
-   dReal sides[] = {0.01,0.01,0.01};
+   dReal sides[] = {0.1,0.1,0.1};
 
    dsSetColor(1,0,0);
    dBodyGetRotation(sensor);
@@ -199,18 +200,18 @@ void directKinematics()
   // double l[4] = { 0.10, 0.90, 1.00, 1.00};      // リンクの長さ[m]
   double angle[8];                              // 関節の角度[rad]
 
-  angle[1] = dJointGetHingeAngle(joint[1]);     // 第1関節角度の取得
-  angle[2] = dJointGetHingeAngle(joint[3])+M_PI;     // 第2関節角度の取得
+  angle[1] = -dJointGetHingeAngle(joint[1]);     // 第1関節角度の取得
+  angle[2] = -dJointGetHingeAngle(joint[3]);     // 第2関節角度の取得
   std::cout << angle[2] << std::endl;
-  angle[3] = dJointGetHingeAngle(joint[4]);     // 第3関節角度の取得
-  angle[4] = dJointGetHingeAngle(joint[5]);     // 第1関節角度の取得
-  angle[5] = dJointGetHingeAngle(joint[7]);     // 第2関節角度の取得
-  angle[6] = dJointGetHingeAngle(joint[8]);     // 第3関節角度の取得
-  angle[7] = dJointGetHingeAngle(joint[9]);     // 第3関節角度の取得
+  angle[3] = -dJointGetHingeAngle(joint[4]);     // 第3関節角度の取得
+  angle[4] = -dJointGetHingeAngle(joint[5]);     // 第1関節角度の取得
+  angle[5] = -dJointGetHingeAngle(joint[7]);     // 第2関節角度の取得
+  angle[6] = -dJointGetHingeAngle(joint[8]);     // 第3関節角度の取得
+  angle[7] = -dJointGetHingeAngle(joint[9]);     // 第3関節角度の取得
 
 
   P[x] = (8*cos(angle[1]))/25 + (87*cos(angle[1])*cos(angle[2]))/200 + (51*cos(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))/50 - (47*cos(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])))/200 + (sin(angle[6])*(sin(angle[1])*sin(angle[5]) - cos(angle[5])*(cos(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])) + sin(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))))/5 - (47*sin(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))/200 - (51*sin(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])))/50 + (cos(angle[6])*(cos(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])) - sin(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3]))))/5 - (87*cos(angle[1])*sin(angle[2])*sin(angle[3]))/200 + (87*cos(angle[1])*cos(angle[2])*cos(angle[3]))/200;
-  P[y] = (8*sin(angle[1]))/25 + (87*cos(angle[2])*sin(angle[1]))/200 + (51*cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/50 - (47*cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/200 - (47*sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/200 - (51*sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/50 - (sin(angle[6])*(cos(angle[1])*sin(angle[5]) + cos(angle[5])*(cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])) + sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))))/5 + (cos(angle[6])*(cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])) - sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1]))))/5 - (87*sin(angle[1])*sin(angle[2])*sin(angle[3]))/200 + (87*cos(angle[2])*cos(angle[3])*sin(angle[1]))/200;
+  P[y] = -((8*sin(angle[1]))/25 + (87*cos(angle[2])*sin(angle[1]))/200 + (51*cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/50 - (47*cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/200 - (47*sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/200 - (51*sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/50 - (sin(angle[6])*(cos(angle[1])*sin(angle[5]) + cos(angle[5])*(cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])) + sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))))/5 + (cos(angle[6])*(cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])) - sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1]))))/5 - (87*sin(angle[1])*sin(angle[2])*sin(angle[3]))/200 + (87*cos(angle[2])*cos(angle[3])*sin(angle[1]))/200);
   P[z] = (87*sin(angle[2]))/200 + (87*cos(angle[2])*sin(angle[3]))/200 + (87*cos(angle[3])*sin(angle[2]))/200 - (cos(angle[6])*(cos(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])) - sin(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2]))))/5 + (47*cos(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])))/200 - (51*cos(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])))/50 + (51*sin(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])))/50 + (47*sin(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])))/200 + (cos(angle[5])*sin(angle[6])*(cos(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])) + sin(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3]))))/5;
 
   // 有顔ベクトル
