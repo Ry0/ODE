@@ -52,12 +52,12 @@ dJointID      sensor_joint;            // センサ固定用の関節
 int           ANSWER = 1;              // 逆運動学の解
 int i,j = 0;
 
-dReal P[3] = {1.34, 0, 1.105};             // 先端の位置
+dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
 // 有顔ベクトル(a,b)
 dReal a[3];//?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};//?わっからーん
 dReal T[2] = {M_PI, 0.0};
-dReal THETA[NUM] = {0.0};  // 関節の目標角度[rad]
+dReal THETA[NUM] = {0.0, 0.0, 0.0, 0.0, -1.1, 0.0, 0.0, 0.0, 0.0, 0.0};  // 関節の目標角度[rad]
 dReal tmpTHETA3, tmpTHETA5;
 dReal l[NUM] = {0.10, 0.10, 0.32, 0.435, 0.435, 0.235, 0.51, 0.51, 0.1, 0.1};   // リンクの長さ[m]
 
@@ -67,7 +67,7 @@ void makeSensor()
 {
   dMass mass;
   double sx = 0.0, sy = 0.0, sz = 2.845;  // センサの初期座標[m]
-  double size = 0.10, weight = 0.00001; // センサのサイズ[m]と重量[kg]
+  double size = 0.05, weight = 0.00001; // センサのサイズ[m]と重量[kg]
 
   sensor = dBodyCreate(world);          // センサの生成
   dBodySetPosition(sensor,sx,sy,sz);
@@ -161,7 +161,7 @@ void drawArm()
 void drawSensor()
 {
  double R,G,B;
- dReal sides[] = {0.10,0.10,0.04};
+ dReal sides[] = {0.05,0.05,0.04};
  R = 0/255;
  G = 153/255;
  B = 255/255;
@@ -203,7 +203,7 @@ void drawP5()
   tmpP[1] = P5y;
   tmpP[2] = P5z;
 
-  dsSetColor(0,1,0);
+  dsSetColor(31.0/255.0, 80.0/255.0, 1);
 
   dRSetIdentity(tmpR);
   dsDrawSphere(tmpP, tmpR, 0.06);
@@ -275,9 +275,8 @@ void  inverseKinematics()
     case 1:
     case 2:
     THETA[1] = atan2(P5y, P5x);
-    tmpTHETA3 = phi + alpha;
-    THETA[3] = tmpTHETA3 + VirtualTHETA;
-    THETA[3] = - THETA[3];
+    tmpTHETA3 = -phi - alpha;
+    THETA[3] = tmpTHETA3 - VirtualTHETA;
     tmpTHETA5 = M_PI - beta - gamma;
     THETA[5] = tmpTHETA5 - VirtualTHETA; break;
     case 3:
@@ -297,12 +296,12 @@ void  inverseKinematics()
     THETA[4] = M_PI - beta; break;
   }
 
-  a2[0] = cos(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) - a[2]*sin(tmpTHETA3+tmpTHETA5);
+  a2[0] = -cos(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) + a[2]*sin(tmpTHETA3+tmpTHETA5);
   a2[1] = -a[0]*sin(THETA[1]) + a[1]*cos(THETA[1]);
-  a2[2] = sin(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) + a[2]*cos(tmpTHETA3+tmpTHETA5);
-  b2[0] = cos(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) - b[2]*sin(tmpTHETA3+tmpTHETA5);
+  a2[2] = -sin(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) - a[2]*cos(tmpTHETA3+tmpTHETA5);
+  b2[0] = -cos(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) + b[2]*sin(tmpTHETA3+tmpTHETA5);
   b2[1] = -b[0]*sin(THETA[1]) + b[1]*cos(THETA[1]);
-  b2[2] = sin(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) + b[2]*cos(tmpTHETA3+tmpTHETA5);
+  b2[2] = -sin(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) - b[2]*cos(tmpTHETA3+tmpTHETA5);
 
   switch (ANSWER) { // ANSWERはキーボードからの入力で変更
     case 1:
@@ -427,8 +426,8 @@ void command2(int cmd)
     case 'v':  T[0] -= 0.1; break;   // vキーを押すと有顔ベクトルのθが減少
     case 'x':  T[1] += 0.1; break;   // xキーを押すと有顔ベクトルのφが増加
     case 'c':  T[1] -= 0.1; break;   // cキーを押すと有顔ベクトルのφが減少
-    case 'b':  THETA[4] += 0.1; break;   // xキーを押すと有顔ベクトルのφが増加
-    case 'n':  THETA[4] -= 0.1; break;   // cキーを押すと有顔ベクトルのφが減少
+    case 'b':  THETA[4] += 0.1; cout << THETA[4] << endl; break;   // xキーを押すと有顔ベクトルのφが増加
+    case 'n':  THETA[4] -= 0.1; cout << THETA[4] << endl; break;   // cキーを押すと有顔ベクトルのφが減少
   }
 }
 
