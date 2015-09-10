@@ -26,8 +26,8 @@ typedef struct {
 MyObject rlink[NUM];                   // リンク
 dReal  THETA[NUM] = {0.000000,
                      0.401426,
-                     -0.052360,
-                     -0.3,
+                     -1.552360,
+                     -1.3,
                      -0.349066,
                      0.628319,
                      0.000000,
@@ -61,13 +61,14 @@ void makeSensor()
 // センサ位置の表示
 void printSensorPosition()
 {
-  for (int i = 1; i < 10; ++i)
-  {
-    printf("THETA[%d] = %lf\n", i,THETA[i]);
-  }
+  // for (int i = 1; i < 10; ++i)
+  // {
+  //   printf("THETA[%d] = %lf\n", i,THETA[i]);
+  // }
   double *pos = (double *) dBodyGetPosition(sensor);
-  printf("P*: x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
-  printf("P : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]);
+  printf("手先センサーからの値   : x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
+  printf("順運動学から導出した値 : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]);
+  printf("\n\n");
 }
 
 // センサ姿勢(有顔ベクトル)の表示
@@ -202,7 +203,6 @@ void directKinematics()
 
   angle[1] = -dJointGetHingeAngle(joint[1]);     // 第1関節角度の取得
   angle[2] = -dJointGetHingeAngle(joint[3]);     // 第2関節角度の取得
-  std::cout << angle[2] << std::endl;
   angle[3] = -dJointGetHingeAngle(joint[4]);     // 第3関節角度の取得
   angle[4] = -dJointGetHingeAngle(joint[5]);     // 第1関節角度の取得
   angle[5] = -dJointGetHingeAngle(joint[7]);     // 第2関節角度の取得
