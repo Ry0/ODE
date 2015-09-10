@@ -1,0 +1,113 @@
+# depslib dependency file v1.0
+1279546085 source:c:\ode-0.11.1\myprog\step5\dm5.cpp
+	"dm5.h"
+
+1279545238 c:\ode-0.11.1\myprog\step5\dm5.h
+	<ode/ode.h>
+	<drawstuff/drawstuff.h>
+
+1209333520 c:\ode-0.11.1\include\ode\ode.h
+	<ode/odeconfig.h>
+	<ode/compatibility.h>
+	<ode/common.h>
+	<ode/odeinit.h>
+	<ode/contact.h>
+	<ode/error.h>
+	<ode/memory.h>
+	<ode/odemath.h>
+	<ode/matrix.h>
+	<ode/timer.h>
+	<ode/rotation.h>
+	<ode/mass.h>
+	<ode/misc.h>
+	<ode/objects.h>
+	<ode/odecpp.h>
+	<ode/collision_space.h>
+	<ode/collision.h>
+	<ode/odecpp_collision.h>
+	<ode/export-dif.h>
+
+1224153198 c:\ode-0.11.1\include\ode\odeconfig.h
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<math.h>
+	<string.h>
+	<float.h>
+
+1082535050 c:\ode-0.11.1\include\ode\compatibility.h
+
+1240494232 c:\ode-0.11.1\include\ode\common.h
+	<ode/odeconfig.h>
+	<ode/error.h>
+	<math.h>
+
+1205087112 c:\ode-0.11.1\include\ode\error.h
+	<ode/odeconfig.h>
+
+1237013294 c:\ode-0.11.1\include\ode\odeinit.h
+	<ode/common.h>
+
+1210284344 c:\ode-0.11.1\include\ode\contact.h
+	<ode/common.h>
+
+1205087112 c:\ode-0.11.1\include\ode\memory.h
+	<ode/odeconfig.h>
+
+1233547606 c:\ode-0.11.1\include\ode\odemath.h
+	<ode/common.h>
+
+1143185766 c:\ode-0.11.1\include\ode\matrix.h
+	<ode/common.h>
+
+1205087112 c:\ode-0.11.1\include\ode\timer.h
+	<ode/odeconfig.h>
+
+1143185766 c:\ode-0.11.1\include\ode\rotation.h
+	<ode/common.h>
+	<ode/compatibility.h>
+
+1229808022 c:\ode-0.11.1\include\ode\mass.h
+	<ode/common.h>
+
+1199279326 c:\ode-0.11.1\include\ode\misc.h
+	<ode/common.h>
+
+1232695796 c:\ode-0.11.1\include\ode\objects.h
+	<ode/common.h>
+	<ode/mass.h>
+	<ode/contact.h>
+
+1229780178 c:\ode-0.11.1\include\ode\odecpp.h
+
+1237013294 c:\ode-0.11.1\include\ode\collision_space.h
+	<ode/common.h>
+
+1233071590 c:\ode-0.11.1\include\ode\collision.h
+	<ode/common.h>
+	<ode/collision_space.h>
+	<ode/contact.h>
+	<ode/odeinit.h>
+	"collision_trimesh.h"
+
+1228539058 c:\ode-0.11.1\include\ode\collision_trimesh.h
+
+1229462408 c:\ode-0.11.1\include\ode\odecpp_collision.h
+
+1143185766 c:\ode-0.11.1\include\ode\export-dif.h
+	<ode/common.h>
+
+1206065808 c:\ode-0.11.1\include\drawstuff\drawstuff.h
+	<drawstuff/version.h>
+
+1025005580 c:\ode-0.11.1\include\drawstuff\version.h
+
+1162518216 source:c:\ode-0.11.1\drawstuff\src\resources.rc
+	"resource.h"
+	"winresrc.h"
+
+989299112 c:\ode-0.11.1\drawstuff\src\resource.h
+
+1279546085 source:c:\ode-0.11.1\myprog\step5\step5.cpp
+	"dm5.h"
+
