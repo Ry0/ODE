@@ -21,6 +21,7 @@ double times = 0;
 ps::pipestream *gnuplot;
 #endif
 
+
 dWorldID      world;                   // 動力学計算用のワールド
 dSpaceID      space;                   // 衝突検出用のスペース
 dGeomID       ground;                  // 地面のジオメトリID番号
@@ -29,17 +30,17 @@ dJointID      joint[NUM];              // ジョイントのID番号
 dsFunctions   fn;                      // ドロースタッフの描画関数
 
 
-
 MyObject rlink[NUM];                   // リンク
 
 dBodyID       sensor;                  // センサ用のボディID
 dJointID      sensor_joint;            // センサ固定用の関節
+
 int ANSWER = 1;              // 逆運動学の解
 int i = 0;                             // simLoopのループカウント用変数
 int data_num = 0;                      // 経路データを読み込んだ時のデータ点数格納用変数
 
 dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
-// dReal P[3] = {0.1,0,0.1};             // 先端の位置
+
 // 有顔ベクトル(a,b)
 dReal a[3];//?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};//?わっからーん
@@ -64,10 +65,6 @@ int cnt = 0;
 /*** シミュレーションループ ***/
 void simLoop(int pause)
 {
-  // THETA[3] = M_PI/10;
-  // P[1] = 0.5*cos(0.01*i);
-  // P[2] = 1.5+0.5*sin(0.01*i);
-  // P[0] = 1.0;
 
   #ifdef PLOT
   if (!pause) {
@@ -190,12 +187,9 @@ int main(int argc, char *argv[])
   *gnuplot << "set xrange[0.8:1.2]"<<ps::endl;
   *gnuplot << "set yrange[-0.4:0.4]"<<ps::endl;
   *gnuplot << "set zrange[0.4:1.6]"<<ps::endl;
-  *gnuplot << "set xtics 0.4"<<ps::endl;
-  *gnuplot << "set ytics 0.4"<<ps::endl;
-  *gnuplot << "set ztics 0.4"<<ps::endl;
-  *gnuplot << "set mxtics 0.2"<<ps::endl;
-  *gnuplot << "set mytics 0.2"<<ps::endl;
-  *gnuplot << "set mztics 0.2"<<ps::endl;
+  *gnuplot << "set xrange[0:2]"<<ps::endl;
+  *gnuplot << "set yrange[-1:1]"<<ps::endl;
+  *gnuplot << "set zrange[1.2:3.2]"<<ps::endl;
 #endif
 
   dsSimulationLoop(argc, argv, 640, 480, &fn);    // シミュレーションループ

@@ -2,6 +2,6 @@
 *.o
 *.DS_Store
 CMakeFiles/
-/CMakeCache.txt
-/Makefile
-/cmake_install.cmake
+CMakeCache.txt
+Makefile
+cmake_install.cmake
