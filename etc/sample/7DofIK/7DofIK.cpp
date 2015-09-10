@@ -98,7 +98,7 @@ void  makeArm()
   dReal z[NUM]      = {0.05, 0.55, 1.25, 1.75, 2.25, 2.75, 3.125, 3.375};  // 重心 z
   dReal length[NUM] = {0.10, 0.90, 0.50, 0.50, 0.50, 0.50, 0.25, 0.25};  // 長さ
   dReal weight[NUM] = {9.00, 2.00, 1.00, 1.00, 1.00, 1.00, 0.50, 0.50};  // 質量
-  dReal r[NUM]      = {0.20, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04};  // 半径
+  dReal r[NUM]      = {0.10, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04};  // 半径
   dReal c_x[NUM]    = {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00};  // 関節中心点 x
   dReal c_y[NUM]    = {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00};  // 関節中心点 y
   dReal c_z[NUM]    = {0.00, 0.10, 1.00, 1.5, 2.00, 2.50, 3.00, 3.25};  // 関節中心点 z
@@ -139,7 +139,6 @@ void drawArm()
     if (i != NUM -1 && i != 0){
       dsDrawCapsule(dBodyGetPosition(rlink[i].body),
       dBodyGetRotation(rlink[i].body),length,r);
-      // if(i == 1 || i == 2){
       if(i==1 || i == 2){
         dsSetColor(1,0,0);
       }else{
@@ -315,7 +314,7 @@ void yugan_a()
 {
   a[0] = sin(T[0])*cos(T[1]);
   a[1] = sin(T[0])*sin(T[1]);
-  a[2] = -cos(T[0]);
+  a[2] = cos(T[0]);
 }
 
 int cnt = 0;
