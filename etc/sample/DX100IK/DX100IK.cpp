@@ -187,9 +187,6 @@ int main(int argc, char *argv[])
   *gnuplot << "set xrange[0.8:1.2]"<<ps::endl;
   *gnuplot << "set yrange[-0.4:0.4]"<<ps::endl;
   *gnuplot << "set zrange[0.4:1.6]"<<ps::endl;
-  *gnuplot << "set xrange[0:2]"<<ps::endl;
-  *gnuplot << "set yrange[-1:1]"<<ps::endl;
-  *gnuplot << "set zrange[1.2:3.2]"<<ps::endl;
 #endif
 
   dsSimulationLoop(argc, argv, 640, 480, &fn);    // シミュレーションループ
