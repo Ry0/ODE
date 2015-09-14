@@ -3,7 +3,9 @@
 #include "area_struct.h"
 
 void Pcontrol();
+void directKinematics();
 void inverseKinematics();
+void CheckThetaE();
 void yugan_a();
 
 void printPosition(std::vector<POINT> &path, int loop, int DrawLength);

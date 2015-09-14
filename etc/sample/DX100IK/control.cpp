@@ -27,7 +27,12 @@ extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
+extern dReal CalTheta[7];
 extern dReal tmpTHETA3, tmpTHETA5;
+extern dReal min_theta[7]; // 各関節の最小角度[rad]
+extern dReal max_theta[7];     // 各関節の最小角度[rad]
+extern dReal max_thetaE, min_thetaE;
+
 extern dReal l[NUM];   // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
@@ -36,7 +41,7 @@ extern vector< POINT > pathdata;
 /*** 制御 ***/
 void Pcontrol()
 {
-  dReal k =  50.0, fMax = 5000.0;                   // 比例ゲイン，最大トルク
+  dReal k =  10.0, fMax = 100000.0;                   // 比例ゲイン，最大トルク
 
   for (int j = 1; j < NUM; j++) {
     dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
@@ -49,6 +54,38 @@ void Pcontrol()
 }
 
 
+void directKinematics()
+{
+  int x = 0, y = 1, z = 2;
+  // double l[4] = { 0.10, 0.90, 1.00, 1.00};      // リンクの長さ[m]
+  double angle[8];                              // 関節の角度[rad]
+
+  angle[1] = -dJointGetHingeAngle(joint[1]);     // 第1関節角度の取得
+  angle[2] = -dJointGetHingeAngle(joint[3]);     // 第2関節角度の取得
+  angle[3] = -dJointGetHingeAngle(joint[4]);     // 第3関節角度の取得
+  angle[4] = -dJointGetHingeAngle(joint[5]);     // 第1関節角度の取得
+  angle[5] = -dJointGetHingeAngle(joint[7]);     // 第2関節角度の取得
+  angle[6] = -dJointGetHingeAngle(joint[8]);     // 第3関節角度の取得
+  angle[7] = -dJointGetHingeAngle(joint[9]);     // 第3関節角度の取得
+
+
+  P[x] = (8*cos(angle[1]))/25 + (87*cos(angle[1])*cos(angle[2]))/200 + (51*cos(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))/50 - (47*cos(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])))/200 + (sin(angle[6])*(sin(angle[1])*sin(angle[5]) - cos(angle[5])*(cos(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])) + sin(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))))/5 - (47*sin(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])))/200 - (51*sin(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3])))/50 + (cos(angle[6])*(cos(angle[4])*(cos(angle[1])*cos(angle[2])*sin(angle[3]) + cos(angle[1])*cos(angle[3])*sin(angle[2])) - sin(angle[4])*(cos(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[1])*cos(angle[2])*cos(angle[3]))))/5 - (87*cos(angle[1])*sin(angle[2])*sin(angle[3]))/200 + (87*cos(angle[1])*cos(angle[2])*cos(angle[3]))/200;
+  P[y] = -((8*sin(angle[1]))/25 + (87*cos(angle[2])*sin(angle[1]))/200 + (51*cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/50 - (47*cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/200 - (47*sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))/200 - (51*sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])))/50 - (sin(angle[6])*(cos(angle[1])*sin(angle[5]) + cos(angle[5])*(cos(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1])) + sin(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])))))/5 + (cos(angle[6])*(cos(angle[4])*(cos(angle[2])*sin(angle[1])*sin(angle[3]) + cos(angle[3])*sin(angle[1])*sin(angle[2])) - sin(angle[4])*(sin(angle[1])*sin(angle[2])*sin(angle[3]) - cos(angle[2])*cos(angle[3])*sin(angle[1]))))/5 - (87*sin(angle[1])*sin(angle[2])*sin(angle[3]))/200 + (87*cos(angle[2])*cos(angle[3])*sin(angle[1]))/200);
+  P[z] = (87*sin(angle[2]))/200 + (87*cos(angle[2])*sin(angle[3]))/200 + (87*cos(angle[3])*sin(angle[2]))/200 - (cos(angle[6])*(cos(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])) - sin(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2]))))/5 + (47*cos(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])))/200 - (51*cos(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])))/50 + (51*sin(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])))/50 + (47*sin(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3])))/200 + (cos(angle[5])*sin(angle[6])*(cos(angle[4])*(cos(angle[2])*sin(angle[3]) + cos(angle[3])*sin(angle[2])) + sin(angle[4])*(cos(angle[2])*cos(angle[3]) - sin(angle[2])*sin(angle[3]))))/5;
+
+  // 有顔ベクトル
+  a[x] =  cos(angle[1]) * sin(angle[2] + angle[3]);    // 主軸:x座標
+  a[y] =  sin(angle[1]) * sin(angle[2] + angle[3]);    // 主軸:y座標
+  a[z] =                  cos(angle[2] + angle[3]);    // 主軸:z座標
+  b[x] =  cos(angle[1]) * cos(angle[2] + angle[3]);    // 副軸:x座標
+  b[y] =  sin(angle[1]) * cos(angle[2] + angle[3]);    // 副軸:y座標
+  b[z] =                - sin(angle[2] + angle[3]);    // 副軸:z座標
+  // printf("P: x=%5.2f y=%5.2f z=%5.2f,",  P[0],P[1],P[2]);
+  // printf("a: x=%5.2f y=%5.2f z=%5.2f,",  a[0],a[1],a[2]);
+  // printf("b: x=%5.2f y=%5.2f z=%5.2f \n",b[0],b[1],b[2]);
+}
+
+
 // 逆運動学
 void  inverseKinematics()
 {
@@ -56,19 +93,20 @@ void  inverseKinematics()
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
   double a2[3];
   double b2[3];
+
   double l2;
   double VirtualTHETA;
 
-  l2 = 2 * l[3] * sin((M_PI - THETA[4])/2);
+  l2 = 2 * l[3] * sin((M_PI - CalTheta[2])/2);
   // cout << "l2 =" << l2 << endl;
-  VirtualTHETA = THETA[4]/2;
+  VirtualTHETA = CalTheta[2]/2;
   // std::cout << l2 << std::endl;
   double P5x = Px - (l[8] + l[9])*a[0];
   double P5y = Py - (l[8] + l[9])*a[1];
   double P5z = Pz - (l[8] + l[9])*a[2];
 
 
-  printf("Target  Position: x=%6.3f y=%6.3f z=%6.3f \n", Px, Py, Pz);
+  // printf("Target  Position: x=%6.3f y=%6.3f z=%6.3f \n", Px, Py, Pz);
 
   double tmpL  = sqrt(P5x * P5x + P5y * P5y);
   double P1P   = sqrt((P5z - l[0] - l[1])*(P5z - l[0] - l[1]) + pow((tmpL - l[2]),2));
@@ -90,52 +128,94 @@ void  inverseKinematics()
   switch (ANSWER) { // ANSWERはキーボードからの入力で変更
     case 1:
     case 2:
-    THETA[1] = atan2(P5y, P5x);
-    tmpTHETA3 = -phi - alpha;
-    THETA[3] = tmpTHETA3 - VirtualTHETA;
+    CalTheta[0] = atan2(P5y, P5x);
+    tmpTHETA3 = - phi - alpha;
+    CalTheta[1] = tmpTHETA3 - VirtualTHETA;
     tmpTHETA5 = M_PI - beta - gamma;
-    THETA[5] = tmpTHETA5 - VirtualTHETA; break;
-    case 3:
-    case 4:
-    THETA[1] = atan2(P5y, P5x);
-    THETA[2] = M_PI/2 - phi + alpha;
-    THETA[4] = M_PI + beta; break;
-    case 5:
-    case 6:
-    THETA[1] = atan2(P5y, P5x) + M_PI;
-    THETA[2] = -(M_PI/2 - phi - alpha);
-    THETA[4] = M_PI + beta; break;
-    case 7:
-    case 8:
-    THETA[1] = atan2(P5y, P5x) + M_PI;
-    THETA[2] = -(M_PI/2 - phi + alpha);
-    THETA[4] = M_PI - beta; break;
+    CalTheta[3] = tmpTHETA5 - VirtualTHETA; break;
+    // case 3:
+    // case 4:
+    // CalTheta[1] = atan2(P5y, P5x);
+    // CalTheta[2] = M_PI/2 - phi + alpha;
+    // CalTheta[4] = M_PI + beta; break;
+    // case 5:
+    // case 6:
+    // CalTheta[1] = atan2(P5y, P5x) + M_PI;
+    // CalTheta[2] = -(M_PI/2 - phi - alpha);
+    // CalTheta[4] = M_PI + beta; break;
+    // case 7:
+    // case 8:
+    // CalTheta[1] = atan2(P5y, P5x) + M_PI;
+    // CalTheta[2] = -(M_PI/2 - phi + alpha);
+    // CalTheta[4] = M_PI - beta; break;
   }
 
-  a2[0] = -cos(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) + a[2]*sin(tmpTHETA3+tmpTHETA5);
-  a2[1] = -a[0]*sin(THETA[1]) + a[1]*cos(THETA[1]);
-  a2[2] = -sin(tmpTHETA3+tmpTHETA5)*(a[0]*cos(THETA[1])+a[1]*sin(THETA[1])) - a[2]*cos(tmpTHETA3+tmpTHETA5);
-  b2[0] = -cos(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) + b[2]*sin(tmpTHETA3+tmpTHETA5);
-  b2[1] = -b[0]*sin(THETA[1]) + b[1]*cos(THETA[1]);
-  b2[2] = -sin(tmpTHETA3+tmpTHETA5)*(b[0]*cos(THETA[1])+b[1]*sin(THETA[1])) - b[2]*cos(tmpTHETA3+tmpTHETA5);
+  a2[0] = -cos(tmpTHETA3+tmpTHETA5)*(a[0]*cos(CalTheta[0])+a[1]*sin(CalTheta[0])) + a[2]*sin(tmpTHETA3+tmpTHETA5);
+  a2[1] = -a[0]*sin(CalTheta[0]) + a[1]*cos(CalTheta[0]);
+  a2[2] = -sin(tmpTHETA3+tmpTHETA5)*(a[0]*cos(CalTheta[0])+a[1]*sin(CalTheta[0])) - a[2]*cos(tmpTHETA3+tmpTHETA5);
+  b2[0] = -cos(tmpTHETA3+tmpTHETA5)*(b[0]*cos(CalTheta[0])+b[1]*sin(CalTheta[0])) + b[2]*sin(tmpTHETA3+tmpTHETA5);
+  b2[1] = -b[0]*sin(CalTheta[0]) + b[1]*cos(CalTheta[0]);
+  b2[2] = -sin(tmpTHETA3+tmpTHETA5)*(b[0]*cos(CalTheta[0])+b[1]*sin(CalTheta[0])) - b[2]*cos(tmpTHETA3+tmpTHETA5);
 
   switch (ANSWER) { // ANSWERはキーボードからの入力で変更
     case 1:
     case 3:
     case 5:
     case 7:
-    THETA[7] = atan2(a2[1], a2[0]);
+    CalTheta[4] = atan2(a2[1], a2[0]);
     break;
     case 2:
     case 4:
     case 6:
     case 8:
-    THETA[7] = atan2(a2[1], a2[0]) + M_PI;
+    CalTheta[4] = atan2(a2[1], a2[0]) + M_PI;
     break;
   }
 
-  THETA[8] = atan2(cos(THETA[7]) * a2[0] + sin(THETA[7]) * a2[1], a2[2]);
-  THETA[9] = atan2(sin(THETA[7]) * sin(THETA[7])*b2[0] - cos(THETA[7])*sin(THETA[7])*b2[1], b2[2]);
+  CalTheta[5] = atan2(cos(CalTheta[4]) * a2[0] + sin(CalTheta[4]) * a2[1], a2[2]);
+  CalTheta[6] = atan2(sin(CalTheta[4]) * sin(CalTheta[4])*b2[0] - cos(CalTheta[4])*sin(CalTheta[4])*b2[1], b2[2]);
+  CheckThetaE();
+}
+
+void CheckThetaE(){
+  int CheckAnswer = 0;
+  
+  // for(int j = -45; j <= 120; j++){
+  //   CalTheta[2] = (double)i*M_PI/180.0;
+    for (int i = 0; i < 7; ++i){
+      if(min_theta[i] <= CalTheta[i] && CalTheta[i] <= max_theta[i]){
+        CheckAnswer += 1;
+      }else{
+        cout << i <<"番目範囲外" << endl;
+      }
+    }
+
+    if(CheckAnswer == 7){
+      THETA[1] = CalTheta[0];
+      THETA[3] = CalTheta[1];
+      THETA[4] = CalTheta[2];
+      THETA[5] = CalTheta[3];
+      THETA[7] = CalTheta[4];
+      THETA[8] = CalTheta[5];
+      THETA[9] = CalTheta[6];
+    }
+  // cout << "THETA_S = " << THETA[1]*180/M_PI << endl;
+  // cout << "THETA_L = " << THETA[3]*180/(M_PI) << endl;
+  // cout << "THETA_E_sirei = " << CalTheta[2]*180/M_PI << endl;
+  // cout << "THETA_E = " << THETA[4]*180/(M_PI) << endl;
+  // cout << "THETA_U = " << THETA[5]*180/(M_PI) << endl;
+  // cout << "THETA_R = " << THETA[7]*180/(M_PI) << endl;
+  // cout << "THETA_B = " << THETA[8]*180/(M_PI) << endl;
+  // cout << "THETA_T = " << THETA[9]*180/(M_PI) << endl;
+  // cout << endl;
+  cout << "THETA_S = " << CalTheta[0]*180/M_PI << endl;
+  cout << "THETA_L = " << CalTheta[1]*180/(M_PI) << endl;
+  cout << "THETA_E = " << CalTheta[2]*180/(M_PI) << endl;
+  cout << "THETA_U = " << CalTheta[3]*180/(M_PI) << endl;
+  cout << "THETA_R = " << CalTheta[4]*180/(M_PI) << endl;
+  cout << "THETA_B = " << CalTheta[5]*180/(M_PI) << endl;
+  cout << "THETA_T = " << CalTheta[6]*180/(M_PI) << endl;
+  cout << endl;
 }
 
 void yugan_a()

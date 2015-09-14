@@ -23,6 +23,9 @@ extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
 extern dReal tmpTHETA3, tmpTHETA5;
+extern dReal min_angle[NUM]; // 各関節の最小角度[rad]
+extern dReal max_angle[NUM]; // 各関節の最大角度[rad]
+
 extern dReal l[NUM];   // リンクの長さ[m]
 
 
@@ -48,10 +51,11 @@ void makeSensor()
 void printSensorPosition()
 {
   double *pos = (double *) dBodyGetPosition(sensor);
-  printf("Current Position: x=%6.3f y=%6.3f z=%6.3f \n",pos[0],pos[1],pos[2]);
-  // printf("%6.2f\t%6.2f\t%6.2f\t",pos[0],pos[1],pos[2]);
-  // printf("P : x=%5.2f y=%5.2f z=%5.2f \n",P[0],P[1],P[2]);
+  printf("手先センサーからの値 : x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
+  printf("運動学から導出した値 : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]+0.2);
+  printf("\n\n");
 }
+
 
 /*** ロボットアームの生成 ***/
 void makeArm()
@@ -97,6 +101,10 @@ void makeArm()
   dJointSetHingeParam(joint[2],dParamHiStop, M_PI/2);
   dJointSetHingeParam(joint[6],dParamLoStop, M_PI/2);
   dJointSetHingeParam(joint[6],dParamHiStop, M_PI/2);
+  // for (int i = 1; i < 10; i++) {
+  //   dJointSetHingeParam(joint[i],dParamLoStop, min_angle[i-1]);
+  //   dJointSetHingeParam(joint[i],dParamHiStop, max_angle[i-1]);
+  // }
 }
 
 /*** ロボットアームの描画 ***/
