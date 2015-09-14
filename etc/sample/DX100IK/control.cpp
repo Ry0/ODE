@@ -28,7 +28,8 @@ extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
 extern dReal CalTheta[7];
-extern dReal tmpTHETA3, tmpTHETA5;
+extern dReal MinMaxTheta[7];
+extern dReal tmpTHETA_L, tmpTHETA_U;
 extern dReal min_theta[7]; // 各関節の最小角度[rad]
 extern dReal max_theta[7];     // 各関節の最小角度[rad]
 extern dReal max_thetaE, min_thetaE;
@@ -41,7 +42,7 @@ extern vector< POINT > pathdata;
 /*** 制御 ***/
 void Pcontrol()
 {
-  dReal k =  10.0, fMax = 100000.0;                   // 比例ゲイン，最大トルク
+  dReal k =  10.0, fMax = 1000000.0;                   // 比例ゲイン，最大トルク
 
   for (int j = 1; j < NUM; j++) {
     dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
@@ -87,7 +88,7 @@ void directKinematics()
 
 
 // 逆運動学
-void  inverseKinematics()
+void  inverseKinematics(double Theta[])
 {
   double Px, Py, Pz;
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
@@ -97,9 +98,9 @@ void  inverseKinematics()
   double l2;
   double VirtualTHETA;
 
-  l2 = 2 * l[3] * sin((M_PI - CalTheta[2])/2);
+  l2 = 2 * l[3] * sin((M_PI - Theta[2])/2);
   // cout << "l2 =" << l2 << endl;
-  VirtualTHETA = CalTheta[2]/2;
+  VirtualTHETA = Theta[2]/2;
   // std::cout << l2 << std::endl;
   double P5x = Px - (l[8] + l[9])*a[0];
   double P5y = Py - (l[8] + l[9])*a[1];
@@ -125,97 +126,116 @@ void  inverseKinematics()
   double gamma = atan2(l[6]+l[7], l[5]);                                    //γ
 
 
-  switch (ANSWER) { // ANSWERはキーボードからの入力で変更
-    case 1:
-    case 2:
-    CalTheta[0] = atan2(P5y, P5x);
-    tmpTHETA3 = - phi - alpha;
-    CalTheta[1] = tmpTHETA3 - VirtualTHETA;
-    tmpTHETA5 = M_PI - beta - gamma;
-    CalTheta[3] = tmpTHETA5 - VirtualTHETA; break;
-    // case 3:
-    // case 4:
-    // CalTheta[1] = atan2(P5y, P5x);
-    // CalTheta[2] = M_PI/2 - phi + alpha;
-    // CalTheta[4] = M_PI + beta; break;
-    // case 5:
-    // case 6:
-    // CalTheta[1] = atan2(P5y, P5x) + M_PI;
-    // CalTheta[2] = -(M_PI/2 - phi - alpha);
-    // CalTheta[4] = M_PI + beta; break;
-    // case 7:
-    // case 8:
-    // CalTheta[1] = atan2(P5y, P5x) + M_PI;
-    // CalTheta[2] = -(M_PI/2 - phi + alpha);
-    // CalTheta[4] = M_PI - beta; break;
-  }
+  Theta[0] = atan2(P5y, P5x);
+  tmpTHETA_L = - phi - alpha;
+  Theta[1] = tmpTHETA_L - VirtualTHETA;
+  tmpTHETA_U = M_PI - beta - gamma;
+  Theta[3] = tmpTHETA_U - VirtualTHETA;
 
-  a2[0] = -cos(tmpTHETA3+tmpTHETA5)*(a[0]*cos(CalTheta[0])+a[1]*sin(CalTheta[0])) + a[2]*sin(tmpTHETA3+tmpTHETA5);
-  a2[1] = -a[0]*sin(CalTheta[0]) + a[1]*cos(CalTheta[0]);
-  a2[2] = -sin(tmpTHETA3+tmpTHETA5)*(a[0]*cos(CalTheta[0])+a[1]*sin(CalTheta[0])) - a[2]*cos(tmpTHETA3+tmpTHETA5);
-  b2[0] = -cos(tmpTHETA3+tmpTHETA5)*(b[0]*cos(CalTheta[0])+b[1]*sin(CalTheta[0])) + b[2]*sin(tmpTHETA3+tmpTHETA5);
-  b2[1] = -b[0]*sin(CalTheta[0]) + b[1]*cos(CalTheta[0]);
-  b2[2] = -sin(tmpTHETA3+tmpTHETA5)*(b[0]*cos(CalTheta[0])+b[1]*sin(CalTheta[0])) - b[2]*cos(tmpTHETA3+tmpTHETA5);
+  a2[0] = -cos(tmpTHETA_L+tmpTHETA_U)*(a[0]*cos(Theta[0])+a[1]*sin(Theta[0])) + a[2]*sin(tmpTHETA_L+tmpTHETA_U);
+  a2[1] = -a[0]*sin(Theta[0]) + a[1]*cos(Theta[0]);
+  a2[2] = -sin(tmpTHETA_L + tmpTHETA_U) * (a[0] * cos(Theta[0]) + a[1] * sin(Theta[0])) -
+          a[2] * cos(tmpTHETA_L + tmpTHETA_U);
+  b2[0] = -cos(tmpTHETA_L + tmpTHETA_U) * (b[0] * cos(Theta[0]) + b[1] * sin(Theta[0])) +
+          b[2] * sin(tmpTHETA_L + tmpTHETA_U);
+  b2[1] = -b[0] * sin(Theta[0]) + b[1] * cos(Theta[0]);
+  b2[2] = -sin(tmpTHETA_L + tmpTHETA_U) * (b[0] * cos(Theta[0]) + b[1] * sin(Theta[0])) -
+          b[2] * cos(tmpTHETA_L + tmpTHETA_U);
 
-  switch (ANSWER) { // ANSWERはキーボードからの入力で変更
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    CalTheta[4] = atan2(a2[1], a2[0]);
-    break;
-    case 2:
-    case 4:
-    case 6:
-    case 8:
-    CalTheta[4] = atan2(a2[1], a2[0]) + M_PI;
-    break;
-  }
+  Theta[4] = atan2(a2[1], a2[0]);
 
-  CalTheta[5] = atan2(cos(CalTheta[4]) * a2[0] + sin(CalTheta[4]) * a2[1], a2[2]);
-  CalTheta[6] = atan2(sin(CalTheta[4]) * sin(CalTheta[4])*b2[0] - cos(CalTheta[4])*sin(CalTheta[4])*b2[1], b2[2]);
+  Theta[5] = atan2(cos(Theta[4]) * a2[0] + sin(Theta[4]) * a2[1], a2[2]);
+  Theta[6] = atan2(sin(Theta[4]) * sin(Theta[4]) * b2[0] - cos(Theta[4]) * sin(Theta[4]) * b2[1],b2[2]);
   CheckThetaE();
 }
 
-void CheckThetaE(){
+void CheckThetaE()
+{
   int CheckAnswer = 0;
-  
-  // for(int j = -45; j <= 120; j++){
-  //   CalTheta[2] = (double)i*M_PI/180.0;
-    for (int i = 0; i < 7; ++i){
-      if(min_theta[i] <= CalTheta[i] && CalTheta[i] <= max_theta[i]){
-        CheckAnswer += 1;
-      }else{
-        cout << i <<"番目範囲外" << endl;
-      }
-    }
 
-    if(CheckAnswer == 7){
-      THETA[1] = CalTheta[0];
-      THETA[3] = CalTheta[1];
-      THETA[4] = CalTheta[2];
-      THETA[5] = CalTheta[3];
-      THETA[7] = CalTheta[4];
-      THETA[8] = CalTheta[5];
-      THETA[9] = CalTheta[6];
+  for (int i = 0; i < 7; ++i) {
+    if (min_theta[i] <= CalTheta[i] && CalTheta[i] <= max_theta[i]) {
+      CheckAnswer += 1;
+    } else {
+      cout << i << "番目範囲外" << endl;
     }
-  // cout << "THETA_S = " << THETA[1]*180/M_PI << endl;
-  // cout << "THETA_L = " << THETA[3]*180/(M_PI) << endl;
-  // cout << "THETA_E_sirei = " << CalTheta[2]*180/M_PI << endl;
-  // cout << "THETA_E = " << THETA[4]*180/(M_PI) << endl;
-  // cout << "THETA_U = " << THETA[5]*180/(M_PI) << endl;
+  }
+
+  if (CheckAnswer == 7) {
+    THETA[1] = CalTheta[0];
+    THETA[3] = CalTheta[1];
+    THETA[4] = CalTheta[2];
+    THETA[5] = CalTheta[3];
+    THETA[7] = CalTheta[4];
+    THETA[8] = CalTheta[5];
+    THETA[9] = CalTheta[6];
+  }
+  // cout << "THETA_S = " << THETA[1] * 180 / M_PI << endl;
+  // cout << "THETA_L = " << THETA[3] * 180 / (M_PI) << endl;
+  // cout << "THETA_E = " << THETA[4] * 180 / (M_PI) << endl;
+  // cout << "THETA_U = " << THETA[5] * 180 / (M_PI) << endl;
   // cout << "THETA_R = " << THETA[7]*180/(M_PI) << endl;
   // cout << "THETA_B = " << THETA[8]*180/(M_PI) << endl;
   // cout << "THETA_T = " << THETA[9]*180/(M_PI) << endl;
   // cout << endl;
-  cout << "THETA_S = " << CalTheta[0]*180/M_PI << endl;
-  cout << "THETA_L = " << CalTheta[1]*180/(M_PI) << endl;
-  cout << "THETA_E = " << CalTheta[2]*180/(M_PI) << endl;
-  cout << "THETA_U = " << CalTheta[3]*180/(M_PI) << endl;
-  cout << "THETA_R = " << CalTheta[4]*180/(M_PI) << endl;
-  cout << "THETA_B = " << CalTheta[5]*180/(M_PI) << endl;
-  cout << "THETA_T = " << CalTheta[6]*180/(M_PI) << endl;
-  cout << endl;
+  // cout << "THETA_S = " << CalTheta[0]*180/M_PI << endl;
+  // cout << "THETA_L = " << CalTheta[1]*180/M_PI << endl;
+  // cout << "THETA_E = " << CalTheta[2]*180/M_PI << endl;
+  // cout << "THETA_U = " << CalTheta[3]*180/M_PI << endl;
+  // cout << "THETA_R = " << CalTheta[4]*180/M_PI << endl;
+  // cout << "THETA_B = " << CalTheta[5]*180/M_PI << endl;
+  // cout << "THETA_T = " << CalTheta[6]*180/M_PI << endl;
+  // cout << endl;
+}
+
+
+void CheckTheta(){
+  int CheckAnswer = 0;
+
+  for(double j = -45; j <= 120; j+=0.1){
+    CheckAnswer = 0;
+    MinMaxTheta[2] = j*M_PI/180.0;
+    inverseKinematics(MinMaxTheta);
+    for (int i = 0; i < 7; ++i){
+      if(min_theta[i] <= MinMaxTheta[i] && MinMaxTheta[i] <= max_theta[i]){
+        CheckAnswer += 1;
+      }
+      // }else{
+      //   cout << i << "番目範囲外: " << CalTheta[2]*180/(M_PI) << endl;
+      // }
+    }
+
+    if(CheckAnswer==7){
+      // cout << "OK: " << CalTheta[2] * 180 / (M_PI) << endl;
+      min_thetaE = MinMaxTheta[2];
+      break;
+    }
+  }
+
+  for(double j = 120; j >= -45; j-=0.1){
+    CheckAnswer = 0;
+    MinMaxTheta[2] = (double)j*M_PI/180.0;
+    inverseKinematics(MinMaxTheta);
+    for (int i = 0; i < 7; ++i){
+      if(min_theta[i] <= MinMaxTheta[i] && MinMaxTheta[i] <= max_theta[i]){
+        CheckAnswer += 1;
+      }
+      // }else{
+      //   cout << i << "番目範囲外: " << CalTheta[2]*180/(M_PI) << endl;
+      // }
+    }
+
+    if(CheckAnswer==7){
+      // cout << "OK: " << CalTheta[2]*180/(M_PI) << endl;
+      max_thetaE = MinMaxTheta[2];
+      break;
+    }
+  }
+}
+
+
+void OptimizationThetaE(){
+  CalTheta[2] = (max_thetaE + min_thetaE)/2;
 }
 
 void yugan_a()

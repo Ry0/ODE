@@ -21,7 +21,6 @@ double times = 0;
 ps::pipestream *gnuplot;
 #endif
 
-
 dWorldID      world;                   // 動力学計算用のワールド
 dSpaceID      space;                   // 衝突検出用のスペース
 dGeomID       ground;                  // 地面のジオメトリID番号
@@ -40,15 +39,31 @@ int i = 0;                             // simLoopのループカウント用変�
 int data_num = 0;                      // 経路データを読み込んだ時のデータ点数格納用変数
 
 dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
-
 // 有顔ベクトル(a,b)
 dReal a[3];//?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};//?わっからーん
 dReal T[2] = {M_PI, 0.0};
-dReal THETA[NUM] = {0.0};  // 関節の目標角度[rad]
-dReal CalTheta[7] = {0.0};       // 目標角度計算用
-dReal tmpTHETA3, tmpTHETA5;
-dReal min_theta[7] = {-180.0*M_PI/180.0, 
+
+#ifdef IK
+dReal THETA[NUM] = {0.0};     // 関節の目標角度[rad]
+#else
+dReal THETA[NUM] = {0.000000,
+                    0.401426,
+                    -1.552360,
+                    -1.3,
+                    -0.349066,
+                    0.628319,
+                    0.000000,
+                    0.418879,
+                    1.343904,
+                    -0.261799};
+#endif
+
+dReal CalTheta[7] = {0.0};    // 目標角度計算用
+dReal MinMaxTheta[7] = {0.0}; // 関節角度の最小値，最大値計算用
+dReal tmpTHETA_L, tmpTHETA_U;
+
+dReal min_theta[7] = {-180.0*M_PI/180.0,
                       -135.0*M_PI/180.0,
                        -45.0*M_PI/180.0,
                        -90.0*M_PI/180.0,
@@ -60,8 +75,9 @@ dReal max_theta[7] = { 180.0*M_PI/180.0,
                        120.0*M_PI/180.0,
                         70.0*M_PI/180.0,
                        360.0*M_PI/180.0,
-                       125.0*M_PI/180.0, 
+                       125.0*M_PI/180.0,
                        360.0*M_PI/180.0};     // 各関節の最大角度[rad]
+
 dReal max_thetaE = 0.0, min_thetaE = 0.0;
 dReal l[NUM] = {0.10, 0.10, 0.32, 0.435, 0.435, 0.235, 0.51, 0.51, 0.1, 0.1};   // リンクの長さ[m]
 
@@ -81,7 +97,6 @@ int cnt = 0;
 /*** シミュレーションループ ***/
 void simLoop(int pause)
 {
-
   #ifdef PLOT
   if (!pause) {
         PlotData d = { times, P[0], P[1], P[2] }; // x, y, z
@@ -112,17 +127,35 @@ void simLoop(int pause)
   #endif
 
   yugan_a();
-  // directKinematics();
-  inverseKinematics();
-  printSensorPosition();
+
+
+  #ifdef IK
+    inverseKinematics(CalTheta);
+    drawP5();                                     // 3軸目までの目標位置の描画
+    drawP();                                      // 目標位置の描画
+  #else
+    directKinematics();
+    printSensorPosition();
+  #endif
+
   Pcontrol();                                  // P制御
   dWorldStep(world, 0.01);                     // 動力学計算
   drawArm();                                   // ロボットの描画
-  drawP5();                                     // 目標位置の描画
-  drawP();                                     // 目標位置の描画
   drawSensor();                                // 先端位置の描画
 
-  // printPosition(pathdata, i, 400);
+  #ifdef IK
+    CheckTheta();
+    cout << "THETA_E     = " << CalTheta[2] * 180 / (M_PI) << endl;
+    cout << "Min THETA_E = " << min_thetaE*180/(M_PI) << endl;
+    cout << "Max THETA_E = " << max_thetaE*180/(M_PI) << endl;
+    cout << endl;
+    OptimizationThetaE();
+  #endif
+
+  #ifdef Path
+    printPosition(pathdata, i, 400);
+  #endif
+
   i++;
 }
 
@@ -188,7 +221,12 @@ void setDrawStuff()
   fn.version = DS_VERSION;                     // バージョン番号
   fn.start   = &start;                         // start関数
   fn.step    = &simLoop;                       // simLoop関数
-  fn.command = &commandIK;                       // command関数
+  #ifdef IK
+    fn.command = &commandIK;                       // command関数
+  #else
+    fn.command = &commandDK;                       // command関数
+  #endif
+
   fn.path_to_textures = "textures";
 }
 
@@ -205,15 +243,17 @@ int main(int argc, char *argv[])
   makeArm();                                      // アームの生成
   makeSensor();                                   // センサの生成
 
-  Input_Data("data/heart.dat");
-#ifdef PLOT
-  gnuplot = new ps::pipestream( "gnuplot -geometry 640x480 " );
-  *gnuplot << "set ticslevel 0"<<ps::endl;
-  *gnuplot << "set view 70, 110, 1, 1.5"<<ps::endl;
-  *gnuplot << "set xrange[0.8:1.2]"<<ps::endl;
-  *gnuplot << "set yrange[-0.4:0.4]"<<ps::endl;
-  *gnuplot << "set zrange[0.4:1.6]"<<ps::endl;
-#endif
+  #ifdef Path
+    Input_Data("data/heart.dat");
+  #endif
+  #ifdef PLOT
+    gnuplot = new ps::pipestream( "gnuplot -geometry 640x480 " );
+    *gnuplot << "set ticslevel 0"<<ps::endl;
+    *gnuplot << "set view 70, 110, 1, 1.5"<<ps::endl;
+    *gnuplot << "set xrange[0.8:1.2]"<<ps::endl;
+    *gnuplot << "set yrange[-0.4:0.4]"<<ps::endl;
+    *gnuplot << "set zrange[0.4:1.6]"<<ps::endl;
+  #endif
 
   dsSimulationLoop(argc, argv, 640, 480, &fn);    // シミュレーションループ
   dSpaceDestroy(space);                           // スペースの破壊

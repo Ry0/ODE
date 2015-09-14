@@ -22,7 +22,7 @@ extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
-extern dReal tmpTHETA3, tmpTHETA5;
+extern dReal tmpTHETA_L, tmpTHETA_U;
 extern dReal min_angle[NUM]; // 各関節の最小角度[rad]
 extern dReal max_angle[NUM]; // 各関節の最大角度[rad]
 
@@ -101,10 +101,6 @@ void makeArm()
   dJointSetHingeParam(joint[2],dParamHiStop, M_PI/2);
   dJointSetHingeParam(joint[6],dParamLoStop, M_PI/2);
   dJointSetHingeParam(joint[6],dParamHiStop, M_PI/2);
-  // for (int i = 1; i < 10; i++) {
-  //   dJointSetHingeParam(joint[i],dParamLoStop, min_angle[i-1]);
-  //   dJointSetHingeParam(joint[i],dParamHiStop, max_angle[i-1]);
-  // }
 }
 
 /*** ロボットアームの描画 ***/
@@ -170,14 +166,13 @@ void drawP5()
   double P5y = P[1] - (l[8] + l[9])*a[1];
   double P5z = P[2] - (l[8] + l[9])*a[2];
 
-
   tmpP[0] = P5x;
   tmpP[1] = P5y;
   tmpP[2] = P5z;
 
-  dsSetColor(31.0/255.0, 80.0/255.0, 1);
+  dsSetColor(242.0/255.0, 140.0/255.0, 187/255.0);
 
   dRSetIdentity(tmpR);
-  dsDrawSphere(tmpP, tmpR, 0.06);
+  dsDrawSphere(tmpP, tmpR, 0.05);
    //printf("P= %f %f %f \n",tmpP[0],tmpP[1],tmpP[2]);
 }
