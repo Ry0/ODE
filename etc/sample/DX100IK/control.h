@@ -3,7 +3,11 @@
 #include "area_struct.h"
 
 void Pcontrol();
-void inverseKinematics();
+void directKinematics();
+void inverseKinematics(double Theta[]);
+void CheckThetaE();
+void CheckTheta();
+void OptimizationThetaE();
 void yugan_a();
 
 void printPosition(std::vector<POINT> &path, int loop, int DrawLength);

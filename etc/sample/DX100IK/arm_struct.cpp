@@ -22,7 +22,10 @@ extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
-extern dReal tmpTHETA3, tmpTHETA5;
+extern dReal tmpTHETA_L, tmpTHETA_U;
+extern dReal min_angle[NUM]; // 各関節の最小角度[rad]
+extern dReal max_angle[NUM]; // 各関節の最大角度[rad]
+
 extern dReal l[NUM];   // リンクの長さ[m]
 
 
@@ -48,10 +51,11 @@ void makeSensor()
 void printSensorPosition()
 {
   double *pos = (double *) dBodyGetPosition(sensor);
-  printf("Current Position: x=%6.3f y=%6.3f z=%6.3f \n",pos[0],pos[1],pos[2]);
-  // printf("%6.2f\t%6.2f\t%6.2f\t",pos[0],pos[1],pos[2]);
-  // printf("P : x=%5.2f y=%5.2f z=%5.2f \n",P[0],P[1],P[2]);
+  printf("手先センサーからの値 : x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
+  printf("運動学から導出した値 : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]+0.2);
+  printf("\n\n");
 }
+
 
 /*** ロボットアームの生成 ***/
 void makeArm()
@@ -162,14 +166,13 @@ void drawP5()
   double P5y = P[1] - (l[8] + l[9])*a[1];
   double P5z = P[2] - (l[8] + l[9])*a[2];
 
-
   tmpP[0] = P5x;
   tmpP[1] = P5y;
   tmpP[2] = P5z;
 
-  dsSetColor(31.0/255.0, 80.0/255.0, 1);
+  dsSetColor(242.0/255.0, 140.0/255.0, 187/255.0);
 
   dRSetIdentity(tmpR);
-  dsDrawSphere(tmpP, tmpR, 0.06);
+  dsDrawSphere(tmpP, tmpR, 0.05);
    //printf("P= %f %f %f \n",tmpP[0],tmpP[1],tmpP[2]);
 }

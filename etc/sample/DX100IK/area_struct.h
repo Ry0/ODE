@@ -22,6 +22,9 @@
 
 using namespace std;
 
+#define IK
+// #define Path
+
 #ifdef dDOUBLE
 #define dsDrawBox      dsDrawBoxD
 #define dsDrawSphere   dsDrawSphereD
