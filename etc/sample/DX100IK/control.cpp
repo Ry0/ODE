@@ -1,5 +1,6 @@
 #include "area_struct.h"
 #include "control.h"
+#include "PSO.h"
 
 #include <cv.h>
 #include <highgui.h>
@@ -26,6 +27,9 @@ extern dReal P[3];             // 先端の位置
 extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
+
+extern dReal Smooth[idou];
+
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
 extern dReal CalTheta[7];
 extern dReal MinMaxTheta[7];
@@ -38,6 +42,7 @@ extern dReal l[NUM];   // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
 
+// extern Particle Par;
 
 /*** 制御 ***/
 void Pcontrol()
@@ -88,7 +93,7 @@ void directKinematics()
 
 
 // 逆運動学
-void  inverseKinematics(double Theta[])
+bool inverseKinematics(double Theta[])
 {
   double Px, Py, Pz;
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
@@ -146,10 +151,14 @@ void  inverseKinematics(double Theta[])
 
   Theta[5] = atan2(cos(Theta[4]) * a2[0] + sin(Theta[4]) * a2[1], a2[2]);
   Theta[6] = atan2(sin(Theta[4]) * sin(Theta[4]) * b2[0] - cos(Theta[4]) * sin(Theta[4]) * b2[1],b2[2]);
-  CheckThetaE();
+  if(CheckThetaE()){
+    return true;
+  }else{
+    return false;
+  }
 }
 
-void CheckThetaE()
+bool CheckThetaE()
 {
   int CheckAnswer = 0;
 
@@ -169,6 +178,9 @@ void CheckThetaE()
     THETA[7] = CalTheta[4];
     THETA[8] = CalTheta[5];
     THETA[9] = CalTheta[6];
+    return true;
+  } else {
+    return false;
   }
   // cout << "THETA_S = " << THETA[1] * 180 / M_PI << endl;
   // cout << "THETA_L = " << THETA[3] * 180 / (M_PI) << endl;
@@ -234,8 +246,35 @@ void CheckTheta(){
 }
 
 
-void OptimizationThetaE(){
-  CalTheta[2] = (max_thetaE + min_thetaE)/2;
+void OptimizationThetaE(int i){
+  double sum = 0.0;
+  Particle Par;
+  double tmpindex[idou];
+
+  Par = ExecPSO(min_thetaE*180/(M_PI), max_thetaE*180/(M_PI));
+
+  cout << "Eの角度 = " << Par->x_star[0] << endl;
+  // cout << "Eの角度 = " << floor(tmp)/100.0*(M_PI)/180 << endl;
+  // CalTheta[2] = floor(tmp)/1000.0*(M_PI)/180;
+  if(i<idou){
+    CalTheta[2] = Par->x_star[0]*(M_PI)/180;
+    Smooth[i%idou] = CalTheta[2];
+  }else{
+    Smooth[i%idou] = Par->x_star[0]*(M_PI)/180;
+
+    for (int j = 0; j < idou; ++j){
+      tmpindex[j] = Smooth[j];
+    }
+    sort(tmpindex, tmpindex+idou);
+    sum = 0.0;
+    for (int k = 0+2; k < idou-2; ++k)
+    {
+      sum += tmpindex[k];
+    }
+
+    CalTheta[2] = sum/(idou-2-2);
+  }
+
 }
 
 void yugan_a()

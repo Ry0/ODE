@@ -18,5 +18,5 @@ find_package( OpenCV REQUIRED )
 
 link_directories("/usr/lib/X11/")
 
-add_executable( DX100IK DX100IK.cpp arm_struct.cpp control.cpp)
+add_executable( DX100IK DX100IK.cpp arm_struct.cpp control.cpp PSO.cpp )
 target_link_libraries( DX100IK ${OpenCV_LIBS} ode drawstuff GL GLU Xmu X11 stdc++ pthread m )

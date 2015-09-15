@@ -1,6 +1,7 @@
 #include "area_struct.h"
 #include "arm_struct.h"
 #include "control.h"
+#include "PSO.h"
 
 // #define PLOT
 #ifdef PLOT
@@ -38,11 +39,20 @@ int ANSWER = 1;              // 逆運動学の解
 int i = 0;                             // simLoopのループカウント用変数
 int data_num = 0;                      // 経路データを読み込んだ時のデータ点数格納用変数
 
-dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
+// dReal P[3] = {0.94, 0, -0.395};             // 先端の位置
+dReal P[3] = {1.140, 0, 1.505};             // 先端の位置
+dReal TempP[3];
+// dReal P[3] = {0.940, 0, -0.395};
+// dReal P[3] = {1.240,0,-1.095};
+
 // 有顔ベクトル(a,b)
-dReal a[3];//?わっからーん
+dReal a[3] = {0.0};//?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};//?わっからーん
-dReal T[2] = {M_PI, 0.0};
+dReal T[2] = {M_PI,0};
+
+dReal Smooth[idou] = {0.0};
+bool flag = false;
+// Particle Par;
 
 #ifdef IK
 dReal THETA[NUM] = {0.0};     // 関節の目標角度[rad]
@@ -97,6 +107,11 @@ int cnt = 0;
 /*** シミュレーションループ ***/
 void simLoop(int pause)
 {
+  if(P[0] == TempP[0] && P[1] == TempP[1] && P[2] == TempP[2]){
+    flag = false;
+  }else {
+    flag = true;
+  }
   #ifdef PLOT
   if (!pause) {
         PlotData d = { times, P[0], P[1], P[2] }; // x, y, z
@@ -128,11 +143,23 @@ void simLoop(int pause)
 
   yugan_a();
 
-
   #ifdef IK
-    inverseKinematics(CalTheta);
+    if(inverseKinematics(CalTheta))
+    {
+      CheckTheta();
+      cout << "THETA_E     = " << CalTheta[2] * 180 / (M_PI) << endl;
+      cout << "Min THETA_E = " << min_thetaE*180/(M_PI) << endl;
+      cout << "Max THETA_E = " << max_thetaE*180/(M_PI) << endl;
+      cout << endl;
+      if(flag){
+        OptimizationThetaE(i);
+      }
+    }else{
+      CalTheta[2] = 0;
+    }
     drawP5();                                     // 3軸目までの目標位置の描画
     drawP();                                      // 目標位置の描画
+    // printSensorPosition();
   #else
     directKinematics();
     printSensorPosition();
@@ -143,20 +170,12 @@ void simLoop(int pause)
   drawArm();                                   // ロボットの描画
   drawSensor();                                // 先端位置の描画
 
-  #ifdef IK
-    CheckTheta();
-    cout << "THETA_E     = " << CalTheta[2] * 180 / (M_PI) << endl;
-    cout << "Min THETA_E = " << min_thetaE*180/(M_PI) << endl;
-    cout << "Max THETA_E = " << max_thetaE*180/(M_PI) << endl;
-    cout << endl;
-    OptimizationThetaE();
-  #endif
-
   #ifdef Path
     printPosition(pathdata, i, 400);
   #endif
 
   i++;
+  TempP[0] = P[0]; TempP[1] = P[1]; TempP[2] = P[2];
 }
 
 void commandDK(int cmd)
@@ -191,18 +210,18 @@ void commandIK(int cmd)
     case '6':  ANSWER = 6; break;    // 2キーを押すと姿勢２
     case '7':  ANSWER = 7; break;    // 3キーを押すと姿勢３
     case '8':  ANSWER = 8; break;    // 4キーを押すと姿勢４
-    case 'j':  P[0] += 0.1; break;   // jキーを押すと先端のx座標が増加
-    case 'f':  P[0] -= 0.1; break;   // fキーを押すと先端のx座標が減少
-    case 'k':  P[1] += 0.1; break;   // kキーを押すと先端のy座標が増加
-    case 'd':  P[1] -= 0.1; break;   // dキーを押すと先端のy座標が減少
-    case 'l':  P[2] += 0.1; break;   // lキーを押すと先端のz座標が増加
-    case 's':  P[2] -= 0.1; break;   // sキーを押すと先端のz座標が減少
+    case 'j':  P[0] += 0.005; break;   // jキーを押すと先端のx座標が増加
+    case 'f':  P[0] -= 0.005; break;   // fキーを押すと先端のx座標が減少
+    case 'k':  P[1] += 0.005; break;   // kキーを押すと先端のy座標が増加
+    case 'd':  P[1] -= 0.005; break;   // dキーを押すと先端のy座標が減少
+    case 'l':  P[2] += 0.005; break;   // lキーを押すと先端のz座標が増加
+    case 's':  P[2] -= 0.005; break;   // sキーを押すと先端のz座標が減少
     case 'z':  T[0] += 0.1; break;   // zキーを押すと有顔ベクトルのθが増加
     case 'v':  T[0] -= 0.1; break;   // vキーを押すと有顔ベクトルのθが減少
     case 'x':  T[1] += 0.1; break;   // xキーを押すと有顔ベクトルのφが増加
     case 'c':  T[1] -= 0.1; break;   // cキーを押すと有顔ベクトルのφが減少
-    case 'b':  CalTheta[2] += 0.05; break;   // xキーを押すと有顔ベクトルのφが増加
-    case 'n':  CalTheta[2] -= 0.05; break;   // cキーを押すと有顔ベクトルのφが減少
+    case 'n':  CalTheta[2] += 0.05; break;   // xキーを押すと有顔ベクトルのφが増加
+    case 'b':  CalTheta[2] -= 0.05; break;   // cキーを押すと有顔ベクトルのφが減少
     case 'r':                         // rキーを押すと初期姿勢に戻る
       P[0] = 1.34;
       P[1] = 0.0;

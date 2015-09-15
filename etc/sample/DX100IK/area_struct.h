@@ -10,7 +10,6 @@
 #include <string>
 #include <algorithm>
 
-#include <cmath>
 #include <cstdlib>
 #include <ctime>
 
@@ -21,7 +20,7 @@
 #include <drawstuff/drawstuff.h>
 
 using namespace std;
-
+#define idou 9
 #define IK
 // #define Path
 

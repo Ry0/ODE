@@ -53,6 +53,8 @@ void printSensorPosition()
   double *pos = (double *) dBodyGetPosition(sensor);
   printf("手先センサーからの値 : x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
   printf("運動学から導出した値 : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]+0.2);
+  printf("姿勢                 : a[0]=%5.3f a[1]=%5.3f a[2]=%5.3f \n",a[0],a[1],a[2]);
+  printf("姿勢パラメータ       : T[0]=%5.3f T[1]=%5.3f\n",T[0],T[1]);
   printf("\n\n");
 }
 

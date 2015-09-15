@@ -4,10 +4,10 @@
 
 void Pcontrol();
 void directKinematics();
-void inverseKinematics(double Theta[]);
-void CheckThetaE();
+bool inverseKinematics(double Theta[]);
+bool CheckThetaE();
 void CheckTheta();
-void OptimizationThetaE();
+void OptimizationThetaE(int i);
 void yugan_a();
 
 void printPosition(std::vector<POINT> &path, int loop, int DrawLength);
