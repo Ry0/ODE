@@ -38,11 +38,14 @@ int ANSWER = 1;              // 逆運動学の解
 int i = 0;                             // simLoopのループカウント用変数
 int data_num = 0;                      // 経路データを読み込んだ時のデータ点数格納用変数
 
-dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
+// dReal P[3] = {1.34, 0, 0.905};             // 先端の位置
+// dReal P[3] = {1.140, 0, 0.405};             // 先端の位置
+dReal P[3] = {0.940, 0, -0.395};
+
 // 有顔ベクトル(a,b)
 dReal a[3];//?わっからーん
 dReal b[3] = {0.0, 0.0, 1.0};//?わっからーん
-dReal T[2] = {M_PI, 0.0};
+dReal T[2] = {M_PI/2,0};
 
 #ifdef IK
 dReal THETA[NUM] = {0.0};     // 関節の目標角度[rad]
@@ -133,6 +136,7 @@ void simLoop(int pause)
     inverseKinematics(CalTheta);
     drawP5();                                     // 3軸目までの目標位置の描画
     drawP();                                      // 目標位置の描画
+    printSensorPosition();
   #else
     directKinematics();
     printSensorPosition();
@@ -149,7 +153,7 @@ void simLoop(int pause)
     cout << "Min THETA_E = " << min_thetaE*180/(M_PI) << endl;
     cout << "Max THETA_E = " << max_thetaE*180/(M_PI) << endl;
     cout << endl;
-    OptimizationThetaE();
+    // OptimizationThetaE();
   #endif
 
   #ifdef Path
