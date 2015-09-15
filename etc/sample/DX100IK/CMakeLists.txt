@@ -21,5 +21,5 @@ find_package( OpenCV REQUIRED )
 include_directories("/usr/local/include/ode/")
 include_directories("/usr/local/include/drawstuff/")
 
-add_executable( DX100IK DX100IK.cpp arm_struct.cpp control.cpp )
+add_executable( DX100IK DX100IK.cpp arm_struct.cpp control.cpp PSO.cpp )
 target_link_libraries( DX100IK ${OpenCV_LIBS} ode drawstuff ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} stdc++ pthread m )

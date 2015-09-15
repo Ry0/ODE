@@ -1,5 +1,6 @@
 #include "area_struct.h"
 #include "control.h"
+#include "PSO.h"
 
 #include <cv.h>
 #include <highgui.h>
@@ -26,6 +27,9 @@ extern dReal P[3];             // 先端の位置
 extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
+
+extern dReal Smooth[10];
+
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
 extern dReal CalTheta[7];
 extern dReal MinMaxTheta[7];
@@ -38,6 +42,7 @@ extern dReal l[NUM];   // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
 
+extern 
 
 /*** 制御 ***/
 void Pcontrol()
@@ -234,8 +239,27 @@ void CheckTheta(){
 }
 
 
-void OptimizationThetaE(){
-  CalTheta[2] = (max_thetaE + min_thetaE)/2;
+void OptimizationThetaE(int i){
+  double tmp;
+  Particle Par;
+
+  Par = ExecPSO(min_thetaE*180/(M_PI), max_thetaE*180/(M_PI));
+  tmp = Par->x_star[0] * 100;
+
+  cout << "Eの角度 = " << Par->x_star[0] << endl;
+  // cout << "Eの角度 = " << floor(tmp)/100.0*(M_PI)/180 << endl;
+  CalTheta[2] = floor(tmp)/100.0*(M_PI)/180;
+  // if(i<10){
+  //   CalTheta[2] = floor(tmp)/100.0*(M_PI)/180;
+  //   Smooth[i%10] = CalTheta[2];
+  // }else{
+  //   Smooth[i%10] = floor(tmp)/100.0*(M_PI)/180;
+  //   for (int i = 0; i < 10; ++i){
+  //     tmp += Smooth[i%10];
+  //   }
+  //   CalTheta[2] = tmp/10.0;
+  // }
+  
 }
 
 void yugan_a()
