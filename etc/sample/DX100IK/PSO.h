@@ -17,9 +17,9 @@ typedef struct {
 
 /* パラメータの定義 */
 //パーティクルの数
-#define Nparticles 10
+#define Nparticles 100
 //ループ回数
-#define T_MAX 100
+#define T_MAX 200
 //慣性重み(以前の速度をどれだけ保持するのか) t=0 (W_0) t=T_MAX (W_T)
 #define W_0 0.9
 #define W_T 0.4

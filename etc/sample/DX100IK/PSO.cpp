@@ -223,7 +223,7 @@ Particle ExecPSO(double min, double max){
       }
 
     }
-
+    // Print(&P[G]);
     w -= (W_0-W_T)/T_MAX;
 
   }
