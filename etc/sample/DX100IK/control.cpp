@@ -21,6 +21,7 @@ extern dJointID      sensor_joint;            // センサ固定用の関節
 extern int ANSWER;              // 逆運動学の解
 extern int i;                             // simLoopのループカウント用変数
 extern int data_num;                      // 経路データを読み込んだ時のデータ点数格納用変数
+extern int Edata_num;                      // 経路データを読み込んだ時のデータ点数格納用変数
 
 extern dReal P[3];             // 先端の位置
 // 有顔ベクトル(a,b)
@@ -28,7 +29,7 @@ extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
 
-extern dReal Smooth[10];
+extern dReal Smooth[idou];
 
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
 extern dReal CalTheta[7];
@@ -41,13 +42,14 @@ extern dReal max_thetaE, min_thetaE;
 extern dReal l[NUM];   // リンクの長さ[m]
 
 extern vector< POINT > pathdata;
+extern vector< POINT > Epathdata;
 
-extern 
+// extern Particle Par;
 
 /*** 制御 ***/
 void Pcontrol()
 {
-  dReal k =  10.0, fMax = 1000000.0;                   // 比例ゲイン，最大トルク
+  dReal k =  10.0, fMax = 10000000.0;                   // 比例ゲイン，最大トルク
 
   for (int j = 1; j < NUM; j++) {
     dReal tmp = dJointGetHingeAngle(joint[j]);     // 関節角の取得
@@ -93,7 +95,7 @@ void directKinematics()
 
 
 // 逆運動学
-void  inverseKinematics(double Theta[])
+bool inverseKinematics(double Theta[])
 {
   double Px, Py, Pz;
   Px = P[0], Py = P[1], Pz = P[2]; // アーム先端の目標座標P(Px,Py,Pz)
@@ -151,10 +153,14 @@ void  inverseKinematics(double Theta[])
 
   Theta[5] = atan2(cos(Theta[4]) * a2[0] + sin(Theta[4]) * a2[1], a2[2]);
   Theta[6] = atan2(sin(Theta[4]) * sin(Theta[4]) * b2[0] - cos(Theta[4]) * sin(Theta[4]) * b2[1],b2[2]);
-  CheckThetaE();
+  if(CheckThetaE()){
+    return true;
+  }else{
+    return false;
+  }
 }
 
-void CheckThetaE()
+bool CheckThetaE()
 {
   int CheckAnswer = 0;
 
@@ -162,26 +168,30 @@ void CheckThetaE()
     if (min_theta[i] <= CalTheta[i] && CalTheta[i] <= max_theta[i]) {
       CheckAnswer += 1;
     } else {
-      cout << i << "番目範囲外" << endl;
+      // cout << i << "番目範囲外" << endl;
     }
   }
 
   if (CheckAnswer == 7) {
-    THETA[1] = CalTheta[0];
-    THETA[3] = CalTheta[1];
-    THETA[4] = CalTheta[2];
-    THETA[5] = CalTheta[3];
-    THETA[7] = CalTheta[4];
-    THETA[8] = CalTheta[5];
-    THETA[9] = CalTheta[6];
+    // THETA[1] = CalTheta[0];
+    // THETA[3] = CalTheta[1];
+    // THETA[4] = CalTheta[2];
+    // THETA[5] = CalTheta[3];
+    // THETA[7] = CalTheta[4];
+    // THETA[8] = CalTheta[5];
+    // THETA[9] = CalTheta[6];
+    return true;
+  } else {
+    // cout << "動作範囲外" << endl;
+    return false;
   }
   // cout << "THETA_S = " << THETA[1] * 180 / M_PI << endl;
   // cout << "THETA_L = " << THETA[3] * 180 / (M_PI) << endl;
   // cout << "THETA_E = " << THETA[4] * 180 / (M_PI) << endl;
   // cout << "THETA_U = " << THETA[5] * 180 / (M_PI) << endl;
-  // cout << "THETA_R = " << THETA[7]*180/(M_PI) << endl;
-  // cout << "THETA_B = " << THETA[8]*180/(M_PI) << endl;
-  // cout << "THETA_T = " << THETA[9]*180/(M_PI) << endl;
+  // cout << "THETA_R = " << THETA[7] * 180/(M_PI) << endl;
+  // cout << "THETA_B = " << THETA[8] * 180/(M_PI) << endl;
+  // cout << "THETA_T = " << THETA[9] * 180/(M_PI) << endl;
   // cout << endl;
   // cout << "THETA_S = " << CalTheta[0]*180/M_PI << endl;
   // cout << "THETA_L = " << CalTheta[1]*180/M_PI << endl;
@@ -239,27 +249,72 @@ void CheckTheta(){
 }
 
 
+double AdjustTheta(){
+  int CheckAnswer = 0;
+  bool success_flag = false;
+  double adjust;
+  dReal Theta[7]={0.0};
+
+  for(double j = -45; j <= 120; j+=0.1){
+    CheckAnswer = 0;
+    Theta[2] = j*M_PI/180.0;
+    inverseKinematics(Theta);
+    for (int i = 0; i < 7; ++i){
+      if(min_theta[i] <= Theta[i] && Theta[i] <= max_theta[i]){
+        CheckAnswer += 1;
+      }
+      // }else{
+      //   cout << i << "番目範囲外: " << CalTheta[2]*180/(M_PI) << endl;
+      // }
+    }
+
+    if(CheckAnswer==7){
+      // cout << "OK: " << CalTheta[2] * 180 / (M_PI) << endl;
+      adjust = Theta[2];
+      success_flag = true;
+      break;
+    }
+  }
+
+  if(success_flag){
+    return adjust;
+  }else{
+    return -100000;
+  }
+
+
+}
+
+
 void OptimizationThetaE(int i){
-  double tmp;
+  double sum = 0.0;
   Particle Par;
+  double tmpindex[idou];
 
   Par = ExecPSO(min_thetaE*180/(M_PI), max_thetaE*180/(M_PI));
-  tmp = Par->x_star[0] * 100;
 
-  cout << "Eの角度 = " << Par->x_star[0] << endl;
+  // cout << "Eの角度 = " << Par->x_star[0] << endl;
   // cout << "Eの角度 = " << floor(tmp)/100.0*(M_PI)/180 << endl;
-  CalTheta[2] = floor(tmp)/100.0*(M_PI)/180;
-  // if(i<10){
-  //   CalTheta[2] = floor(tmp)/100.0*(M_PI)/180;
-  //   Smooth[i%10] = CalTheta[2];
+  CalTheta[2] = Par->x_star[0]*(M_PI)/180;
+  // if(i<idou){
+  //   CalTheta[2] = Par->x_star[0]*(M_PI)/180;
+  //   Smooth[i%idou] = CalTheta[2];
   // }else{
-  //   Smooth[i%10] = floor(tmp)/100.0*(M_PI)/180;
-  //   for (int i = 0; i < 10; ++i){
-  //     tmp += Smooth[i%10];
+  //   Smooth[i%idou] = Par->x_star[0]*(M_PI)/180;
+
+  //   for (int j = 0; j < idou; ++j){
+  //     tmpindex[j] = Smooth[j];
   //   }
-  //   CalTheta[2] = tmp/10.0;
+  //   sort(tmpindex, tmpindex+idou);
+  //   sum = 0.0;
+  //   for (int k = 0+2; k < idou-2; ++k)
+  //   {
+  //     sum += tmpindex[k];
+  //   }
+
+  //   CalTheta[2] = sum/(idou-2-2);
   // }
-  
+
 }
 
 void yugan_a()
@@ -349,4 +404,19 @@ void printPosition(std::vector<POINT> &path, int loop, int DrawLength)
     dRSetIdentity(tmpR);
     dsDrawSphere(P, tmpR, 0.02);
   }
+}
+
+
+void EInput_Data(std::string fileName)
+{
+  std::ifstream input(fileName.c_str());
+  Edata_num = CountNumbersOfTextLines(fileName);
+  Epathdata.resize(Edata_num);
+
+  for (int i = 0; i < Edata_num; ++i){
+    input >> Epathdata[i].x;
+  }
+  cout << "ファイル読み込み成功" << endl;
+
+  input.close();
 }

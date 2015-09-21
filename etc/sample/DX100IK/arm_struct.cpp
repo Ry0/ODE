@@ -22,6 +22,7 @@ extern dReal a[3];
 extern dReal b[3];
 extern dReal T[2];
 extern dReal THETA[NUM];  // 関節の目標角度[rad]
+extern dReal CalTheta[7];
 extern dReal tmpTHETA_L, tmpTHETA_U;
 extern dReal min_angle[NUM]; // 各関節の最小角度[rad]
 extern dReal max_angle[NUM]; // 各関節の最大角度[rad]
@@ -52,9 +53,15 @@ void printSensorPosition()
 {
   double *pos = (double *) dBodyGetPosition(sensor);
   printf("手先センサーからの値 : x=%5.3f y=%5.3f z=%5.3f \n",pos[0],pos[1],pos[2]);
-  printf("運動学から導出した値 : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]+0.2);
+  #ifdef IK
+  printf("IKから導出した値     : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]);
+  #else
+  printf("DKから導出した値     : x=%5.3f y=%5.3f z=%5.3f \n",P[0],P[1],P[2]+0.2);
+  #endif
   printf("姿勢                 : a[0]=%5.3f a[1]=%5.3f a[2]=%5.3f \n",a[0],a[1],a[2]);
   printf("姿勢パラメータ       : T[0]=%5.3f T[1]=%5.3f\n",T[0],T[1]);
+  printf("各関節の角度         : S=%5.3f L=%5.3f U=%5.3f E=%5.3f R=%5.3f B=%5.3f T=%5.3f", 
+         -CalTheta[0]*180.0/M_PI, (-CalTheta[1]-M_PI/2.0)*180.0/M_PI, -CalTheta[3]*180.0/M_PI, -CalTheta[2]*180.0/M_PI, -CalTheta[4]*180.0/M_PI, -CalTheta[5]*180.0/M_PI, -CalTheta[6]*180.0/M_PI);
   printf("\n\n");
 }
 

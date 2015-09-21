@@ -13,6 +13,7 @@ extern dReal CalTheta[7];    // 目標角度計算用
 extern dReal MinMaxTheta[7];
 // extern double MinMaxTheta[7]; // 関節角度の最小値，最大値計算用
 // extern double tmpTHETA_L, tmpTHETA_U;
+// extern Particle Par;
 
 
 double GetRandom(double min,double max, int digit){
@@ -101,14 +102,14 @@ void Evaluate(Particle P){
   Trq_E = m2*(leng_Eg * sin(-s1-s2+(atan2(0.088,0.007)-M_PI/2)))+m3*(len2*sin(-s1-s2)+leng_Ug*sin(-s1-s2-s3+(atan2(0.141,-0.118)-M_PI/2)))+m4*(len2*sin(-s1-s2)+a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+leng_Rg*sin(-s1-s2-s3+M_PI/2+(atan2(0,0.026)-M_PI/2)))+m5*(len2*sin(-s1-s2)+a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+leng_Bg*sin(-s1-s2-s3-s4+M_PI/2+(atan2(0,-0.104)-M_PI/2)))+m7*(len2*sin(-s1-s2)+a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+len5*sin(-s1-s2-s3-s4-s5+M_PI/2));
 
   // U軸周りの負荷
-  Trq_U = m3*(leng_Ug*sin(-s1-s2-s3+(atan2(0.141,-0.118)-M_PI/2)))+m4*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+leng_Rg*sin(-s1-s2-s3+M_PI/2+(atan2(0,0.026)-M_PI/2)))+m5*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+leng_Bg*sin(-s1-s2-s3-s4+M_PI/2+(atan2(0,-0.104)-M_PI/2)))+m7*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+len5*sin(-s1-s2-s3-s4-s5+M_PI/2));        
+  Trq_U = m3*(leng_Ug*sin(-s1-s2-s3+(atan2(0.141,-0.118)-M_PI/2)))+m4*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+leng_Rg*sin(-s1-s2-s3+M_PI/2+(atan2(0,0.026)-M_PI/2)))+m5*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+leng_Bg*sin(-s1-s2-s3-s4+M_PI/2+(atan2(0,-0.104)-M_PI/2)))+m7*(a4*sin(-s1-s2-s3)+d4*sin(-s1-s2-s3+M_PI/2)+len4*sin(-s1-s2-s3-s4+M_PI/2)+len5*sin(-s1-s2-s3-s4-s5+M_PI/2));
 
   // B軸周りの負荷
   Trq_B = m4*(leng_Rg*sin(-s1-s2-s3+M_PI/2+(atan2(0,0.026)-M_PI/2)))+m5*(len4*sin(-s1-s2-s3-s4+M_PI/2)+leng_Bg*sin(-s1-s2-s3-s4+M_PI/2+(atan2(0,-0.104)-M_PI/2)))+m7*(len4*sin(-s1-s2-s3-s4+M_PI/2)+len5*sin(-s1-s2-s3-s4-s5+M_PI/2));
 
   // plot << CalTheta[2] << "\t" << Torque[0] << "\t" << Torque[1] << "\t" << Torque[2] << "\t" << Torque[3] << endl;
   P->f = 0.0;
-  P->f = fabs(Trq_L/trq_max_L) + fabs(Trq_E/trq_max_E) + 2*fabs(Trq_U/trq_max_U) + fabs(Trq_B/trq_max_B);
+  P->f = fabs(Trq_L/trq_max_L) + fabs(Trq_E/trq_max_E) + fabs(Trq_U/trq_max_U) + fabs(Trq_B/trq_max_B);
   // cout << P->x[0] << ", " << P->f << endl;
   // P->f = -4*exp(-(pow((P->x[0]-2),2) + pow((P->x[1]-2),2))) - 2*exp(-(pow((P->x[0]+0.5),2) + pow((P->x[1]+0.5),2))/3) - 3.5*exp(-(pow((P->x[0]-4),2) + pow((P->x[1]+2),2))/2);
 }
@@ -131,7 +132,7 @@ int Initialize(Particle P, int n, double min, double max){
   G=0;
   for(i=0; i<n; i++) {
     for(j=0; j<Nvariables; j++){
-      P[i].x[j] = GetRandom(min, max, 6);//0から1の乱数発生
+      P[i].x[j] = GetRandom(min, max, 3);//0から1の乱数発生
       P[i].v[j] = 0.0;//速度は0
     }
     Evaluate(&P[i]);
@@ -209,7 +210,7 @@ Particle ExecPSO(double min, double max){
         // お魚さんがエリアオーバーしたら漁場に戻す
         if(P[i].x[j] <= min){
           P[i].x[j] = min;
-        } 
+        }
         if(P[i].x[j] >= max){
           P[i].x[j] = max;
         }
@@ -222,7 +223,7 @@ Particle ExecPSO(double min, double max){
       }
 
     }
-
+    // Print(&P[G]);
     w -= (W_0-W_T)/T_MAX;
 
   }
