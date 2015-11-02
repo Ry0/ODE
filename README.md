@@ -46,7 +46,7 @@ make
 
 ```bash
 sudo apt-get install libode-dev
-sudo apt-get install libxmu-dev
+sudo apt-get install libxmu-dev libxi-dev
 ```
 
 ###drawstuffインストール
