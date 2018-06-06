@@ -5,7 +5,7 @@
 
 ## [1. Nachi](https://github.com/Ry0/ODE/tree/master/Nachi)
 株式会社不二越のNachi、MZ07のシミュレーション  
-![Nachi](https://dl.dropboxusercontent.com/u/23873125/Markdown/Nachi_MZ072.jpg)
+![Nachi](.img/Nachi_MZ072.jpg)
 
 ### 更新情報
 * 2014.12.16 ファイル引数を指定するようにしたよ
@@ -29,11 +29,11 @@ make
 * めっちゃ初期の段階のロボットアームのソースコード
 * 3軸と6軸が混ざってる  
 
-![arm](https://dl.dropboxusercontent.com/u/23873125/Markdown/arm.jpg)
+![arm](.img/arm.jpg)
 
 * 遊びで作ったNリンクアーム  
 
-![nlink](https://dl.dropboxusercontent.com/u/23873125/Markdown/nlink.png)
+![nlink](.img/nlink.png)
 
 ### etc
 * 他のODEで作ったシミュレーションと出村先生のサンプルコード  
