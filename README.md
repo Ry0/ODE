@@ -38,7 +38,7 @@ make
 ### etc
 * 他のODEで作ったシミュレーションと出村先生のサンプルコード  
 
-##ODEのインストール
+## ODEのインストール
 [1. Nachi](https://github.com/Ry0/ODE/tree/master/Nachi)を実行するためにはOpenCVが必要．  
 [https://github.com/Ry0/my_ubuntu_setup/tree/master/OpenCV_install](https://github.com/Ry0/my_ubuntu_setup/tree/master/OpenCV_install)参照
 
@@ -49,7 +49,7 @@ sudo apt-get install libode-dev
 sudo apt-get install libxmu-dev libxi-dev
 ```
 
-###drawstuffインストール
+### drawstuffインストール
 
 [http://sourceforge.net/projects/opende/files/ODE/0.13/](http://sourceforge.net/projects/opende/files/ODE/0.13/)からソースをダウンロード
 
